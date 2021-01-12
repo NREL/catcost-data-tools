@@ -1,6 +1,12 @@
-.vscode/
+# CatCost Data Tools
+all_ids.json
 
-# Following lines from Python.gitignore example at https://github.com/github/gitignore/blob/master/Python.gitignore
+# Dev and OS
+.vscode/
+.DS_store
+
+
+# The following lines are from Python.gitignore example at https://github.com/github/gitignore/blob/master/Python.gitignore
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
