@@ -27,7 +27,7 @@ The section below uses PyQt5 to generate the user interface
 class App(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.title = 'CatCost Library UI'
+        self.title = 'CatCost Excel-to-JSON UI'
         self.left = 10
         self.top = 50
         self.width = 640
@@ -40,26 +40,27 @@ class App(QMainWindow):
         
         self.statusBar().showMessage('Ready')
         
-        mat_to_json_button = QPushButton('Materials\nExcel to JSON', self)
-        mat_to_json_button.setToolTip('Click to convert materials from Excel to JSON')
-        mat_to_json_button.clicked.connect(self.mat_to_json_click)
-        mat_to_json_button.move(100,70)
-        mat_to_json_button.resize(90,50)
-        equip_to_json_button = QPushButton('Equipment\nExcel to JSON', self)
-        equip_to_json_button.setToolTip('Click to convert equipment from Excel to JSON')
-        equip_to_json_button.clicked.connect(self.equip_to_json_click)
-        equip_to_json_button.move(100,140)
-        equip_to_json_button.resize(90,50)
-        spent_cat_to_json_button = QPushButton('Spent Catalyst\nExcel to JSON', self)
-        spent_cat_to_json_button.setToolTip('Click to convert spent catalyst from Excel to JSON')
-        spent_cat_to_json_button.clicked.connect(self.spent_cat_to_json_click)
-        spent_cat_to_json_button.move(100,210)
-        spent_cat_to_json_button.resize(90,50)
         estimate_to_json_button = QPushButton('Estimate\nExcel to JSON', self)
         estimate_to_json_button.setToolTip('Click to convert an estimate from Excel to JSON')
         estimate_to_json_button.clicked.connect(self.estimate_to_json_click)
-        estimate_to_json_button.move(100,280)
-        estimate_to_json_button.resize(90,50)
+        estimate_to_json_button.move(100,70)
+        estimate_to_json_button.resize(180,50)
+        mat_to_json_button = QPushButton('Materials Library\nExcel to JSON', self)
+        mat_to_json_button.setToolTip('Create a JSON Materials Library from a CatCost Excel file')
+        mat_to_json_button.clicked.connect(self.mat_to_json_click)
+        mat_to_json_button.move(100,140)
+        mat_to_json_button.resize(180,50)
+        equip_to_json_button = QPushButton('Equipment Library\nExcel to JSON', self)
+        equip_to_json_button.setToolTip('Create a JSON Equipment Library from a CatCost Excel file')
+        equip_to_json_button.clicked.connect(self.equip_to_json_click)
+        equip_to_json_button.move(100,210)
+        equip_to_json_button.resize(180,50)
+        spent_cat_to_json_button = QPushButton('Spent Catalyst Library\nExcel to JSON', self)
+        spent_cat_to_json_button.setToolTip('Create a JSON Spent Catalyst Library from a CatCost Excel file')
+        spent_cat_to_json_button.clicked.connect(self.spent_cat_to_json_click)
+        spent_cat_to_json_button.move(100,280)
+        spent_cat_to_json_button.resize(180,50)
+
 #        self.openFileNameDialog()
 #        self.openFileNamesDialog()
 #        self.saveFileDialog()
