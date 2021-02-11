@@ -1,0 +1,629 @@
+{
+  "spent_cat_support": [
+    {
+      "metal_contaminant_fee": {
+        "high": 18,
+        "baseline": 16.0,
+        "low": 14
+      },
+      "version": "1.0.0",
+      "loss_of_catalyst_solids_fixed": 2.0,
+      "loss_of_metal_slurry": 4.0,
+      "id": "4d45f226-529b-4548-9e38-57438b898047",
+      "name": "Al2O3",
+      "thermal_ox_fee": {
+        "high": 0.15,
+        "baseline": 0.1375,
+        "low": 0.125
+      },
+      "loss_of_catalyst_solids_slurry": 2.0,
+      "loss_of_metal_fixed": 3.0,
+      "updatedOn": 1565908719,
+      "incoming_fee": {
+        "high": 123,
+        "baseline": 115.5,
+        "low": 108
+      }
+    },
+    {
+      "metal_contaminant_fee": {
+        "high": 21,
+        "baseline": 18.0,
+        "low": 15
+      },
+      "version": "1.0.0",
+      "loss_of_catalyst_solids_fixed": 2.0,
+      "loss_of_metal_slurry": 5.0,
+      "id": "855140ba-015b-44b6-8930-61ac5cfc55b9",
+      "name": "Carbon",
+      "thermal_ox_fee": {
+        "high": 0.15,
+        "baseline": 0.1375,
+        "low": 0.125
+      },
+      "loss_of_catalyst_solids_slurry": 6.0,
+      "loss_of_metal_fixed": 2.5,
+      "updatedOn": 1565908719,
+      "incoming_fee": {
+        "high": 115,
+        "baseline": 104.5,
+        "low": 94
+      }
+    },
+    {
+      "metal_contaminant_fee": {
+        "high": 18,
+        "baseline": 16.0,
+        "low": 14
+      },
+      "version": "1.0.0",
+      "loss_of_catalyst_solids_fixed": 5.0,
+      "loss_of_metal_slurry": 5.0,
+      "id": "8598ea10-e12c-471f-9a4e-b028d9404876",
+      "name": "Carbonate",
+      "thermal_ox_fee": {
+        "high": 0.15,
+        "baseline": 0.1375,
+        "low": 0.125
+      },
+      "loss_of_catalyst_solids_slurry": 5.0,
+      "loss_of_metal_fixed": 5.0,
+      "updatedOn": 1565908719,
+      "incoming_fee": {
+        "high": 123,
+        "baseline": 115.5,
+        "low": 108
+      }
+    },
+    {
+      "metal_contaminant_fee": {
+        "high": 18,
+        "baseline": 16.0,
+        "low": 14
+      },
+      "version": "1.0.0",
+      "loss_of_catalyst_solids_fixed": 5.0,
+      "loss_of_metal_slurry": 5.0,
+      "id": "2ab16804-a54c-48d3-a2e3-51a7c64b86e2",
+      "name": "Clay",
+      "thermal_ox_fee": {
+        "high": 0.15,
+        "baseline": 0.1375,
+        "low": 0.125
+      },
+      "loss_of_catalyst_solids_slurry": 5.0,
+      "loss_of_metal_fixed": 5.0,
+      "updatedOn": 1565908719,
+      "incoming_fee": {
+        "high": 123,
+        "baseline": 115.5,
+        "low": 108
+      }
+    },
+    {
+      "metal_contaminant_fee": {
+        "high": 18,
+        "baseline": 16.0,
+        "low": 14
+      },
+      "version": "1.0.0",
+      "loss_of_catalyst_solids_fixed": 2.0,
+      "loss_of_metal_slurry": 4.0,
+      "id": "e9223e91-bc9e-4147-817f-6db78b8e8357",
+      "name": "SiO2",
+      "thermal_ox_fee": {
+        "high": 0.15,
+        "baseline": 0.1375,
+        "low": 0.125
+      },
+      "loss_of_catalyst_solids_slurry": 2.0,
+      "loss_of_metal_fixed": 3.0,
+      "updatedOn": 1565908719,
+      "incoming_fee": {
+        "high": 123,
+        "baseline": 115.5,
+        "low": 108
+      }
+    },
+    {
+      "metal_contaminant_fee": {
+        "high": 14,
+        "baseline": 12.5,
+        "low": 11
+      },
+      "version": "1.0.0",
+      "loss_of_catalyst_solids_fixed": null,
+      "loss_of_metal_slurry": 5.0,
+      "id": "3b38757f-586b-43be-827e-f7ba504f00d5",
+      "name": "Sponge of metal (no support)",
+      "thermal_ox_fee": {
+        "high": 0.15,
+        "baseline": 0.1375,
+        "low": 0.125
+      },
+      "loss_of_catalyst_solids_slurry": null,
+      "loss_of_metal_fixed": 5.0,
+      "updatedOn": 1565908719,
+      "incoming_fee": {
+        "high": 92,
+        "baseline": 86.5,
+        "low": 81
+      }
+    },
+    {
+      "metal_contaminant_fee": {
+        "high": 18,
+        "baseline": 16.0,
+        "low": 14
+      },
+      "version": "1.0.0",
+      "loss_of_catalyst_solids_fixed": 2.0,
+      "loss_of_metal_slurry": 12.5,
+      "id": "99f29864-bc8f-4532-928f-f63388aba814",
+      "name": "TiO2",
+      "thermal_ox_fee": {
+        "high": 0.15,
+        "baseline": 0.1375,
+        "low": 0.125
+      },
+      "loss_of_catalyst_solids_slurry": 3.0,
+      "loss_of_metal_fixed": 10.0,
+      "updatedOn": 1565908719,
+      "incoming_fee": {
+        "high": 123,
+        "baseline": 115.5,
+        "low": 108
+      }
+    },
+    {
+      "metal_contaminant_fee": {
+        "high": 18,
+        "baseline": 16.0,
+        "low": 14
+      },
+      "version": "1.0.0",
+      "loss_of_catalyst_solids_fixed": 2.0,
+      "loss_of_metal_slurry": 12.5,
+      "id": "d706941d-4b90-4814-8df6-8f86b44f64bd",
+      "name": "ZrO2",
+      "thermal_ox_fee": {
+        "high": 0.15,
+        "baseline": 0.1375,
+        "low": 0.125
+      },
+      "loss_of_catalyst_solids_slurry": 3.0,
+      "loss_of_metal_fixed": 10.0,
+      "updatedOn": 1565908719,
+      "incoming_fee": {
+        "high": 123,
+        "baseline": 115.5,
+        "low": 108
+      }
+    }
+  ],
+  "spent_cat_hazard": [
+    {
+      "name": "Zeolite, Silica, Alumina",
+      "version": "1.0.0",
+      "sale_value": {
+        "high": null,
+        "baseline": 0.05,
+        "low": null
+      },
+      "id": "ccc11a3b-e78c-44f2-b917-29ec99e3a15f",
+      "note": "e.g. for cement",
+      "updatedOn": 1565908719,
+      "landfill_fee": {
+        "high": 0.2,
+        "baseline": 0.175,
+        "low": 0.15
+      }
+    },
+    {
+      "name": "Ni/Mo, Co/Mo, Ni/W",
+      "version": "1.0.0",
+      "sale_value": {
+        "high": null,
+        "baseline": null,
+        "low": null
+      },
+      "id": "5665a8ab-afc9-4aa8-87e2-5d27ee45f61c",
+      "note": null,
+      "updatedOn": 1565908719,
+      "landfill_fee": {
+        "high": null,
+        "baseline": 0.75,
+        "low": null
+      }
+    },
+    {
+      "name": "PGM/Noble metal",
+      "version": "1.0.0",
+      "sale_value": {
+        "high": 1.3,
+        "baseline": 1.15,
+        "low": 1.0
+      },
+      "id": "d3478641-b194-4003-9c0d-8a37b01c341f",
+      "note": "e.g. to smelter or refiner, typically <0.2% PGM",
+      "updatedOn": 1565908719,
+      "landfill_fee": {
+        "high": 3.0,
+        "baseline": 2.0,
+        "low": 1.0
+      }
+    },
+    {
+      "name": "Hazardous (e.g. RCRA metals)",
+      "version": "1.0.0",
+      "sale_value": {
+        "high": null,
+        "baseline": null,
+        "low": null
+      },
+      "id": "f0339c70-46d6-4f55-bc68-e8fc1cff8bd4",
+      "note": null,
+      "updatedOn": 1565908719,
+      "landfill_fee": {
+        "high": 3.0,
+        "baseline": 2.0,
+        "low": 1.0
+      }
+    }
+  ],
+  "spent_cat_bulk_density": [
+    {
+      "id": "bc9118de-aa56-48d3-8731-728881ea9761",
+      "note": "containing 50% moisture",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "Activated C granules",
+      "density": 46.0
+    },
+    {
+      "id": "ded8fe0d-946c-40f3-abe9-e75b084b0f1e",
+      "note": "containing 50% moisture",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "Activated C powder",
+      "density": 42.0
+    },
+    {
+      "id": "c9c55b1f-4b60-4812-a7e3-d476733003f9",
+      "note": "dry extrudate",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "Al2O3/SiO2, 44%/51%",
+      "density": 50.0
+    },
+    {
+      "id": "5d04fc80-2fd0-452d-9e8b-94f4d1068b0e",
+      "note": "dry extrudate",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "Metal on Al2O3",
+      "density": 45.0
+    },
+    {
+      "id": "22e61b81-7dea-405a-90bf-ce7c80b1e2be",
+      "note": "dry extrudate",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "Metal on TiO2",
+      "density": 65.0
+    },
+    {
+      "id": "311d9136-3459-402a-8dd8-3f0a3e85f7ff",
+      "note": "dry extrudate",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "Metal on ZrO2",
+      "density": 66.0
+    },
+    {
+      "id": "abfdd765-f165-4a05-b283-d0126ff01ff0",
+      "note": "dry spheres",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "SiO2, 3/16\"",
+      "density": 30.0
+    },
+    {
+      "id": "933f3809-e889-4f18-8386-8980aa9f5e36",
+      "note": "dry pellet/extrudate",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "SiO2, high surface area 160 m2/g",
+      "density": 39.0
+    },
+    {
+      "id": "8c24ba8a-afbd-4c78-81d1-7b937a06c74b",
+      "note": "dry pellet/extrudate",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "SiO2, high surface area 250 m2/g",
+      "density": 22.0
+    },
+    {
+      "id": "dec215c6-e63e-4819-a791-216039c83d17",
+      "note": "dry basis; average of 67.5-75 lb/ft3",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "Sponge Ni, Co, or Cu",
+      "density": 71.25
+    },
+    {
+      "id": "b31875ab-02ee-4f89-804d-ff5ff95d1c0f",
+      "note": "150 m2/g, dry pellet/extrudate",
+      "density_unit": "lb/ft3",
+      "version": "1.0.0",
+      "updatedOn": 1565908719,
+      "name": "TiO2, anatase, high surface area",
+      "density": 55.0
+    }
+  ],
+  "spent_cat_metal": [
+    {
+      "name": "Aluminum",
+      "source": "infomine.com",
+      "note": "Claus, misc",
+      "version": "1.0.0",
+      "id": "97c5980f-6286-4970-a15b-2c4257f8876b",
+      "loss": {
+        "high": null,
+        "baseline": 70.0,
+        "low": null
+      },
+      "unit": "lb",
+      "has_refining_charge": "no",
+      "updatedOn": 1565908719,
+      "spot_price": 0.96,
+      "refining_charge": null,
+      "year": "2018"
+    },
+    {
+      "name": "Cobalt",
+      "source": "infomine.com",
+      "note": null,
+      "version": "1.0.0",
+      "id": "9ddaecc4-fa12-41b6-9132-13321bd6459c",
+      "loss": {
+        "high": null,
+        "baseline": 20.0,
+        "low": null
+      },
+      "unit": "lb",
+      "has_refining_charge": "no",
+      "updatedOn": 1565908719,
+      "spot_price": 29.6,
+      "refining_charge": null,
+      "year": "2018"
+    },
+    {
+      "name": "Copper",
+      "source": "infomine.com",
+      "note": "CuZn",
+      "version": "1.0.0",
+      "id": "cce60a00-6f4b-4879-9d64-df5a492eee59",
+      "loss": {
+        "high": 25.0,
+        "baseline": 20.0,
+        "low": 15.0
+      },
+      "unit": "lb",
+      "has_refining_charge": "no",
+      "updatedOn": 1565908719,
+      "spot_price": 2.75,
+      "refining_charge": null,
+      "year": "2018"
+    },
+    {
+      "name": "Gold",
+      "source": "infomine.com",
+      "note": null,
+      "version": "1.0.0",
+      "id": "7c8c203a-1b47-4643-bba2-44fddf2b71fe",
+      "loss": {
+        "high": null,
+        "baseline": 10.0,
+        "low": null
+      },
+      "unit": "oz t",
+      "has_refining_charge": "yes",
+      "updatedOn": 1565908719,
+      "spot_price": 1200.8,
+      "refining_charge": 11.0,
+      "year": "2018"
+    },
+    {
+      "name": "Iridium",
+      "source": "infomine.com",
+      "note": null,
+      "version": "1.0.0",
+      "id": "d3451ff0-803b-46cb-b7df-4ac3485afe0f",
+      "loss": {
+        "high": null,
+        "baseline": 10.0,
+        "low": null
+      },
+      "unit": "oz t",
+      "has_refining_charge": "yes",
+      "updatedOn": 1565908719,
+      "spot_price": 1440.0,
+      "refining_charge": 25.0,
+      "year": "2018"
+    },
+    {
+      "name": "Iron",
+      "source": "Unprepared iron from https://www.cmcrecyclingindependence.com/current-pricing/",
+      "note": null,
+      "version": "1.0.0",
+      "id": "096faca3-b92c-494c-b4a2-bf8d750e6fb0",
+      "loss": {
+        "high": null,
+        "baseline": 40.0,
+        "low": null
+      },
+      "unit": "tons",
+      "has_refining_charge": "no",
+      "updatedOn": 1565908719,
+      "spot_price": 95.0,
+      "refining_charge": null,
+      "year": "2018"
+    },
+    {
+      "name": "Molybdenum",
+      "source": "London Metals Exchange",
+      "note": null,
+      "version": "1.0.0",
+      "id": "05d0cb74-4fec-455d-a299-9bd66c20f58e",
+      "loss": {
+        "high": 30.0,
+        "baseline": 25.0,
+        "low": 20.0
+      },
+      "unit": "tonnes",
+      "has_refining_charge": "no",
+      "updatedOn": 1565908719,
+      "spot_price": 24000.0,
+      "refining_charge": null,
+      "year": "2018"
+    },
+    {
+      "name": "Nickel",
+      "source": "infomine.com",
+      "note": null,
+      "version": "1.0.0",
+      "id": "bde09eab-ffa0-475f-9042-c377d7e85d27",
+      "loss": {
+        "high": null,
+        "baseline": 20.0,
+        "low": null
+      },
+      "unit": "lb",
+      "has_refining_charge": "no",
+      "updatedOn": 1565908719,
+      "spot_price": 6.08,
+      "refining_charge": null,
+      "year": "2018"
+    },
+    {
+      "name": "Palladium",
+      "source": "infomine.com",
+      "note": null,
+      "version": "1.0.0",
+      "id": "724c35fe-695a-4d4e-92f0-0005e93dd3e6",
+      "loss": {
+        "high": 4.0,
+        "baseline": 2.5,
+        "low": 1.0
+      },
+      "unit": "oz t",
+      "has_refining_charge": "yes",
+      "updatedOn": 1565908719,
+      "spot_price": 975.0,
+      "refining_charge": 12.5,
+      "year": "2018"
+    },
+    {
+      "name": "Platinum",
+      "source": "infomine.com",
+      "note": null,
+      "version": "1.0.0",
+      "id": "42431afa-effa-4b5b-bf81-4ccc3857a45b",
+      "loss": {
+        "high": 3.0,
+        "baseline": 2.0,
+        "low": 1.0
+      },
+      "unit": "oz t",
+      "has_refining_charge": "yes",
+      "updatedOn": 1565908719,
+      "spot_price": 793.5,
+      "refining_charge": 14.5,
+      "year": "2018"
+    },
+    {
+      "name": "Rhodium",
+      "source": "infomine.com",
+      "note": null,
+      "version": "1.0.0",
+      "id": "ae0876a5-4a32-4e7a-aa68-362bf636e61b",
+      "loss": {
+        "high": 10.0,
+        "baseline": 7.5,
+        "low": 5.0
+      },
+      "unit": "oz t",
+      "has_refining_charge": "yes",
+      "updatedOn": 1565908719,
+      "spot_price": 2390.0,
+      "refining_charge": 16.0,
+      "year": "2018"
+    },
+    {
+      "name": "Ruthenium",
+      "source": "infomine.com",
+      "note": null,
+      "version": "1.0.0",
+      "id": "8d59d3c9-17d4-441f-8160-23add6f562bd",
+      "loss": {
+        "high": 25.0,
+        "baseline": 20.0,
+        "low": 15.0
+      },
+      "unit": "oz t",
+      "has_refining_charge": "yes",
+      "updatedOn": 1565908719,
+      "spot_price": 260.0,
+      "refining_charge": 20.0,
+      "year": "2018"
+    },
+    {
+      "name": "Silver",
+      "source": "infomine.com",
+      "note": null,
+      "version": "1.0.0",
+      "id": "6923233b-90fc-4eb9-ad02-c9cafa5bb3b4",
+      "loss": {
+        "high": 3.0,
+        "baseline": 2.5,
+        "low": 2.0
+      },
+      "unit": "oz t",
+      "has_refining_charge": "yes",
+      "updatedOn": 1565908719,
+      "spot_price": 14.58,
+      "refining_charge": 11.5,
+      "year": "2018"
+    },
+    {
+      "name": "Tungsten",
+      "source": "InvestmentMine",
+      "note": "NiW",
+      "version": "1.0.0",
+      "id": "5d48d457-05d2-486b-b9b3-983ef38e682d",
+      "loss": {
+        "high": 25.0,
+        "baseline": 20.0,
+        "low": 15.0
+      },
+      "unit": "kg",
+      "has_refining_charge": "no",
+      "updatedOn": 1565908719,
+      "spot_price": 24.04,
+      "refining_charge": null,
+      "year": "2016"
+    }
+  ]
+}
