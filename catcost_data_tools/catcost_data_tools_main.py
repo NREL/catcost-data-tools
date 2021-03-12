@@ -12,13 +12,14 @@ import math
 import uuid
 import json
 import time
-from openpyxl import load_workbook # TODO refactor to use defusedxml for better security
+# from openpyxl import load_workbook # TODO refactor to use defusedxml for better security
 from xlrd import open_workbook
 from collections import OrderedDict
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon
+    
 
 """
 The section below uses PyQt5 to generate the user interface
@@ -61,17 +62,17 @@ class App(QMainWindow):
         spent_cat_to_json_button.move(100,280)
         spent_cat_to_json_button.resize(180,50)
 
-#        self.openFileNameDialog()
-#        self.openFileNamesDialog()
-#        self.saveFileDialog()
+        # self.openFileNameDialog()
+        # self.openFileNamesDialog()
+        # self.saveFileDialog()
         
         self.show()
         
     @pyqtSlot()
     def mat_to_json_click(self):
         self.openMatToJsonFileNameDialog()
-#        self.openFileNamesDialog()
-#        self.saveFileDialog()
+        # self.openFileNamesDialog()
+        # self.saveFileDialog()
         
         self.show()
         
@@ -92,7 +93,7 @@ class App(QMainWindow):
                 self.output_file = fileName + '.json'
             else:
                 self.output_file = fileName
-#            print(self.input_file,'\n',self.output_file)
+            # print(self.input_file,'\n',self.output_file)
             self.statusBar().showMessage('Converting excel materials library to JSON file')
             materials_to_json(self.input_file,self.output_file)
             if os.path.exists(self.output_file):
@@ -103,8 +104,8 @@ class App(QMainWindow):
     @pyqtSlot()
     def equip_to_json_click(self):
         self.openEquipToJsonFileNameDialog()
-#        self.openFileNamesDialog()
-#        self.saveFileDialog()
+        # self.openFileNamesDialog()
+        # self.saveFileDialog()
         
         self.show()
         
@@ -125,7 +126,7 @@ class App(QMainWindow):
                 self.output_file = fileName + '.json'
             else:
                 self.output_file = fileName
-#            print(self.input_file,'\n',self.output_file)
+            # print(self.input_file,'\n',self.output_file)
             self.statusBar().showMessage('Converting excel equipment library to JSON file')
             equip_to_json(self.input_file,self.output_file)
             if os.path.exists(self.output_file):
@@ -136,8 +137,8 @@ class App(QMainWindow):
     @pyqtSlot()
     def spent_cat_to_json_click(self):
         self.openSpentCatToJsonFileNameDialog()
-#        self.openFileNamesDialog()
-#        self.saveFileDialog()
+        # self.openFileNamesDialog()
+        # self.saveFileDialog()
         
         self.show()
         
@@ -158,7 +159,7 @@ class App(QMainWindow):
                 self.output_file = fileName + '.json'
             else:
                 self.output_file = fileName
-#            print(self.input_file,'\n',self.output_file)
+            # print(self.input_file,'\n',self.output_file)
             self.statusBar().showMessage('Converting excel spent catalyst library to JSON file')
             spent_cat_json, sensitivity_compliance_support, sensitivity_compliance_metal = spent_cat_to_json(self.input_file,self.output_file)
             #print(sensitivity_compliance_lst)
@@ -180,8 +181,8 @@ class App(QMainWindow):
     @pyqtSlot()
     def estimate_to_json_click(self):
         self.openEstimateToJsonFileNameDialog()
-#        self.openFileNamesDialog()
-#        self.saveFileDialog()
+        # self.openFileNamesDialog()
+        # self.saveFileDialog()
         
         self.show()
         
@@ -203,7 +204,7 @@ class App(QMainWindow):
             else:
                 self.output_file = fileName
             self.statusBar().showMessage('Converting excel estimate to JSON file')
-#            print(self.input_file,'\n',self.output_file)
+            # print(self.input_file,'\n',self.output_file)
             est_json, est_sensitivity_compliance, spent_cat_sensitivity_compliance, mat_sensitivity_compliance = estimate_to_json(self.input_file,self.output_file)
             if not all(est_sensitivity_compliance.values()):
                 sensitivity_message = QMessageBox.information(self,'Sensitivity compliance error','A sensitivity value is incorrectly higher or lower than the baseline. It has been changed to null')
@@ -224,12 +225,14 @@ class App(QMainWindow):
             else:
                 self.statusBar().showMessage('Something went wrong...')
                 
+
 def main():
     qapp = QApplication(sys.argv)
     
     ex = App()
     ex.show()
     sys.exit(qapp.exec())
+
 
 def get_materials_lib(excel_path):
     """
@@ -240,7 +243,7 @@ def get_materials_lib(excel_path):
     return ccm_mat_lib_df
 
 
-
+# TODO: delete get_icis (not used)
 def get_icis():
     """
     gathers the ICIS price data in a pandas dataframe to integrate it into the materials library
@@ -303,6 +306,8 @@ def get_icis():
     icis_df['Bulk Quote Units'] = icis_df.apply(lambda row: rename_tons(row), axis=1)
     return icis_df
 
+
+# TODO: delete rename_tons (only for get_icis)
 def rename_tons(row):
     #renames instances of singular ton from ICIS database to match format of current materials library
     unit = row['Bulk Quote Units']
@@ -314,48 +319,31 @@ def rename_tons(row):
         new_unit = unit
     return new_unit
 
+
 def gen_id():
     #randomly creates a uuid to be used on a material
     an_id = str(uuid.uuid4())
     return an_id
 
+
 def date_to_str(row):
-    #given the presence of several different date formats, this one normalizes them all to strings
-    #this script has been dramatically simplified now that the date format is normalized
-    #it simply accounts for the empty rows
+    """
+    Given the presence of several different date formats, this one normalizes them all to strings.
+    This script has been dramatically simplified now that the date format is normalized
+    it simply accounts for empty rows.
+    """
     ts = row['Quote Access Date']
-#    try:
     dt = ts.to_pydatetime()
 
-#    except AttributeError:
-#        dt = ts
     try:
         date_string = dt.strftime('%m/%d/%Y')
     except ValueError: #try-except control sequence used to resolve NaTType error for blank entries in the quote access date column
         date_string = "01/01/" + str(row['Quote Year'])
 
-
     ep = int(time.mktime(time.strptime(date_string, '%m/%d/%Y')))  
-#    print(date_string)
-#    print(ep)     
 
-#    if date_string == "?":
-#        date_string_tmp = "01/01/" + str(row['Quote Year'])
-#        ep = int(time.mktime(time.strptime(date_string_tmp,'%m/%d/%Y')))
-#    elif date_string == "RP153":
-#        date_string_tmp = "01/01/" + str(row['Quote Year'])
-#        ep = int(time.mktime(time.strptime(date_string_tmp,'%m/%d/%Y')))
-#    elif date_string == "01/01/1900":
-#        date_string = "01/01/" + str(row['Quote Year'])
-#        ep = int(time.mktime(time.strptime(date_string,'%m/%d/%Y')))
-#    elif type(date_string) == float:
-#        if math.isnan(date_string):
-#            date_string = "01/01/" + str(row['Quote Year'])
-#            ep = int(time.mktime(time.strptime(date_string,'%m/%d/%Y')))
-#    else
-#        #print(date_string)
-#        ep = int(time.mktime(time.strptime(date_string, '%m/%d/%Y')))
     return ep, date_string
+
 
 def make_price_dict(entry):
     """
@@ -363,12 +351,13 @@ def make_price_dict(entry):
     """
     price_dict = {}
     price_type = "lab-scale-log-fit" if entry["Lab-Scale Log Fit?"] == 'Lab' else "quote"
+
     #tests if the data in the materials library for a material is lab or bulk quote data
     price_dict["type"] = price_type
     price_dict["year"] = str(entry["Quote Year"])
     
     if price_type == "quote":
-        #fills out quote block for quote prices\
+        #fills out quote block for quote prices
         price_dict['bulk_quote_units'] = entry['bulk_quote_units']
         price_dict["quote"] = {}
         price_dict["quote"]["source"] = entry["Quote Source"]
@@ -379,10 +368,6 @@ def make_price_dict(entry):
             price_dict['bulk_quote_units'] = 'tons'
         elif price_dict['bulk_quote_units'] == 'tonne':
             price_dict['bulk_quote_units'] = 'tonnes'
-        #adds null entries for lab values
-        #price_dict['lab_scale_units'] = None
-        #price_dict['lab-scale-log-fit'] = {}
-    #labels material units
    
     else:
         #fills out lab block for lab prices and gives default values for quote
@@ -400,17 +385,9 @@ def make_price_dict(entry):
             price_dict['lab_scale_units'] = 'tons'
         elif price_dict['lab_scale_units'] == 'tonne':
             price_dict['lab_scale_units'] = 'tonnes'
-            #labels material units
-        #adds null entries for quote values
-        #price_dict['bulk_quote_units'] = None
-        #price_dict["quote"] = {}
-    
-    
     
     return price_dict
     
-
-
 
 def materials_to_json(excel_path, json_path, complete=False, version="1.0.0", remove_proprietary=True):
     """
@@ -438,21 +415,24 @@ def materials_to_json(excel_path, json_path, complete=False, version="1.0.0", re
 
     """
     
+    # TODO: remove complete
+    # TODO: refactor beginning to generate mat_lib_dict
     if complete:
         mat_lib_df = get_materials_lib(excel_path)
     else:
         mat_lib_df = pd.read_excel(excel_path, 
                                    sheet_name="Materials Library",skiprows=14,
-                                   skip_footer=0)
+                                   skipfooter=0)
     nrows = len(mat_lib_df)
     mat_lib_df["version"] = [version] * nrows
     #populates version as 1.0.0 for all materials. may become deprecated
-    mat_lib_df = mat_lib_df.rename(columns={"Material Name":"name","Material Type":"type",
-                                            "MW (g/mol)":"molecularWeight",
-                                            "Density (g/mL)":"density",
-                                            "Concentration (%)":"concentration",
-                                            "Lab Units":"lab_scale_units",
-                                            "Bulk Quote Units":"bulk_quote_units"})
+    mat_lib_df = mat_lib_df.rename(columns={"Material Name": "name",
+                                            "Material Type": "type",
+                                            "MW (g/mol)": "molecularWeight",
+                                            "Density (g/mL)": "density",
+                                            "Concentration (%)": "concentration",
+                                            "Lab Units": "lab_scale_units",
+                                            "Bulk Quote Units": "bulk_quote_units"})
     #changes names of columns to match json
     mat_lib_df = mat_lib_df.drop(["Notes","Basis Cell"], 1)
     mat_lib_df = mat_lib_df[mat_lib_df['Quote Source'] != 'IHS PEP']
@@ -470,48 +450,54 @@ def materials_to_json(excel_path, json_path, complete=False, version="1.0.0", re
                     'Lab Unit P 4','Lab Units','Lab-Scale Log Fit?','Quote Access Date',
                     'Quote Source','Quote Year','Unit price','Unit price dimensions',
                     'Unit price in quote year', 'lab_scale_units', 'bulk_quote_units']
-    #list of unnecessary keys removed from json file
+    # list of unnecessary keys removed from json file
     mat_lib_dict = mat_lib_df.to_dict('records')
-#    mat_lib_dict = OrderedDict([('name', mat_lib_dict['name']),('type',mat_lib_dict['type']),('molecularWeight',mat_lib_dict['molecularWeight']),
-#                                ('density',mat_lib_dict['density']),('concentration',mat_lib_dict['concentration']),('version',mat_lib_dict['version']),
-#                                ('price',mat_lib_dict['price']),('id',mat_lib_dict['id']),('updatedOn',mat_lib_dict['updatedOn'])])
-    #convert df to dict
+    # mat_lib_dict = OrderedDict([('name', mat_lib_dict['name']),('type',mat_lib_dict['type']),('molecularWeight',mat_lib_dict['molecularWeight']),
+                                # ('density',mat_lib_dict['density']),('concentration',mat_lib_dict['concentration']),('version',mat_lib_dict['version']),
+                                # ('price',mat_lib_dict['price']),('id',mat_lib_dict['id']),('updatedOn',mat_lib_dict['updatedOn'])])
+    # convert df to dict
     mat_id_dict = get_ids('mat_id_dict')
     for entry in mat_lib_dict:
         entry["price"] = make_price_dict(entry)
-        #generates price dictionary for each dictionary
-        #entry["id"] = gen_id()
+        # generates price dictionary for each dictionary
+        # entry["id"] = gen_id()
+
+        # create id for each material
         try:
             entry["id"] = mat_id_dict[entry['name']]
         except KeyError:
             entry['id'] = add_id('mat_id_dict',entry['name'])
-        #create id for each material
         entry["updatedOn"] = date_to_str(entry)[0]
+
+        # removes any columns listed in the clean up list
         for item in clean_up_lst:
             entry.pop(item,None)
-            #removes any columns listed in the clean up list
         if type(entry["type"]) == float:
             entry.pop('type', None)
+
+        # changes nan values in outer dictionary of each entry into null values
         for key in entry:
             if entry[key] == "":
                 entry[key] = None
             if type(entry[key]) == float:
                 if math.isnan(entry[key]): 
                     entry[key] = None
-                    #changes nan values in outer dictionary of each entry into null values
+
+        # changes nan values for "date" within the price quote dictionary into null values
         if 'quote' in entry['price'].keys():
             if type(entry['price']['quote']['date']) == float:
                 if math.isnan(entry['price']['quote']['date']):
                     entry['price']['quote']['date'] = None
-                #changes nan values for "date" within the price quote dictionary into null values
     
-    mat_lib_json = json.dumps(mat_lib_dict,indent=2)
-    #converts dictionary to json
+    # converts dictionary to json
+    mat_lib_json = json.dumps(mat_lib_dict, indent=2)
     if json_path != None:
-        with open(json_path,'w') as mat_json_out:
+        with open(json_path, 'w') as mat_json_out:
             mat_json_out.write(mat_lib_json)
     return mat_lib_json
 
+
+# TODO: get this working
 def materials_json_to_excel(excel_path, json_path):
     """
     Converts JSON materials library to standalone excel materials library.
@@ -614,22 +600,24 @@ def materials_json_to_excel(excel_path, json_path):
             'Bulk Quote Price ($)', 'Bulk Quote Quantity', 'Bulk Quote Units',
             'Quote Year', 'Quote Source', 'Quote Access Date']]
     df.to_excel(excel_path)
-#    with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
-#        book = load_workbook(excel_path)
-#        writer.book = book
-#        writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
-#        df.to_excel(writer, sheet_name='Materials Library', header=False, index=False,
-#                    startrow=924)
-#        writer.save()
-#        writer.close()
+    # with pd.ExcelWriter(excel_path, engine='openpyxl') as writer:
+        # book = load_workbook(excel_path)
+        # writer.book = book
+        # writer.sheets = dict((ws.title, ws) for ws in book.worksheets)
+        # df.to_excel(writer, sheet_name='Materials Library', header=False, index=False,
+                    # startrow=924)
+        # writer.save()
+        # writer.close()
     
-#The commented out sequence above works to add a dataframe in the desired position 
-#on excel sheets other than the CCM. Hypothesis is that working with it in the 
-#excel table format is throwing something off. Want to repeat my attempt with 
-#the equipment library to confirm if it's the table or something else about the
-#CCM that's actually causing the problems. Writing to the equipment library has also not worked.
+    #The commented out sequence above works to add a dataframe in the desired position 
+    #on excel sheets other than the CCM. Hypothesis is that working with it in the 
+    #excel table format is throwing something off. Want to repeat my attempt with 
+    #the equipment library to confirm if it's the table or something else about the
+    #CCM that's actually causing the problems. Writing to the equipment library has also not worked.
     return df
     
+
+# TODO: determine if unused
 def create_mat_id_dict(excel_path):
     """
     Generates a dictionary containing all of the ids for materials with unique names.
@@ -665,8 +653,6 @@ def create_mat_id_dict(excel_path):
     return mat_id_dict
 
     
-
-
 """
 The Following section is used to import the equipment library
 """
@@ -676,10 +662,9 @@ def get_equipment(excel_path):
     """
     gets the existing materials library as a pandas dataframe. Will be used to create json file
     """
-    
-    equip_df = pd.read_excel(excel_path,
-                                   sheet_name="Equip. Library", skip_footer=1)
+    equip_df = pd.read_excel(excel_path, sheet_name="Equip. Library", skipfooter=1)
     return equip_df
+
 
 def split_nc(row):
     """
@@ -700,7 +685,8 @@ def split_nc(row):
     my_value = row['n / c']
     return my_value
 
-def rename_func_type(row): #workaround to match names of function types between excel and json schema
+
+def rename_func_type(row):  # workaround to match names of function types between excel and json schema
     """
     Renames function types for the scaling lawas of the equipment to match the desired output.
     """
@@ -710,6 +696,7 @@ def rename_func_type(row): #workaround to match names of function types between 
     elif curr_function_type == '2 - Poly Exp':
         new_function_type = "Poly Exp"
     return new_function_type
+
 
 def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
     """
@@ -733,28 +720,28 @@ def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
     None.
 
     """
+    # TODO: refactor beginning to generate equipment_dict
     if complete:
         equip_df = get_equipment(excel_path)
     else:
-        equip_df = pd.read_excel(excel_path, 
-                                   sheet_name="Equip. Library",
-                                   skip_footer=1)
-    equip_df = equip_df.rename(columns={"Category (not in use)":"category",
-                                        "Name":"name", "Year":"year",
-                                        "Units for Size, S":"size_unit",
-                                        "S lower":"size_min", "S upper":"size_max",
-                                        "BM Factor (not in use)":"bm_factor",
-                                        "Installation Factor (Garrett)":"installation_factor",
-                                        "Note":"note", "Source":"source",
-                                        "CEPCI":"cepci","NF Refinery":"nf_refinery",
-                                        "Labor Factor":"labor_factor"})
+        equip_df = pd.read_excel(excel_path, sheet_name="Equip. Library",
+                                 skipfooter=1)
+    equip_df = equip_df.rename(columns={"Category (not in use)": "category",
+                                        "Name": "name", "Year": "year",
+                                        "Units for Size, S": "size_unit",
+                                        "S lower": "size_min", "S upper": "size_max",
+                                        "BM Factor (not in use)": "bm_factor",
+                                        "Installation Factor (Garrett)": "installation_factor",
+                                        "Note": "note", "Source": "source",
+                                        "CEPCI": "cepci","NF Refinery": "nf_refinery",
+                                        "Labor Factor": "labor_factor"})
     equip_df = equip_df[equip_df.size_unit.notnull()]
     nrows = len(equip_df)
+    # populates version as 1.0.0 for all materials. may become deprecated
     equip_df["version"] = [version] * nrows
-    #populates version as 1.0.0 for all materials. may become deprecated
     equip_df['c'] = equip_df.apply(lambda row: split_nc(row), axis=1)
     equip_df['n'] = equip_df.apply(lambda row: split_nc(row), axis=1)
-    equip_df = equip_df.drop(['n / c'],1)
+    equip_df = equip_df.drop(['n / c'], 1)
     equip_df['function_type'] = equip_df.apply(lambda row: rename_func_type(row), axis=1)
     equip_df = equip_df.drop(['Function Type'],1)
     clean_up_lst = ['Pricing Basis Material','Material 1','Material 2',
@@ -764,7 +751,7 @@ def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
                     'Factor 6', 'Factor 7', 'Factor 8', 'Factor 9', 'Factor 10']
     #equip_df = equip_df.drop(clean_up_lst,1)
     equip_dict = equip_df.to_dict('records')
-#    equip_dict = OrderedDict([('name',equip_dict['name']),('category',equip_dict['category']),()])
+    # equip_dict = OrderedDict([('name',equip_dict['name']),('category',equip_dict['category']),()])
     equip_id_dict = get_ids('equip_id_dict')
     for entry in equip_dict:
         if type(entry['year']) == float:
@@ -779,8 +766,8 @@ def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
             if type(entry[key]) == float:
                 if math.isnan(entry[key]): 
                     entry[key] = None
-#                elif entry[key] < 0:
-#                    entry[key] = -entry[key]
+                # elif entry[key] < 0:
+                    # entry[key] = -entry[key]
                     #change back to none for final value
         entry['updatedOn'] = int(np.floor(time.time()))
         try:
@@ -798,6 +785,7 @@ def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
             equip_json_out.write(equip_json)
     return equip_json
     
+
 def make_pricing_basis_lst(entry):
     pricing_basis_lst = []
     for idx in range(1,11):
@@ -812,7 +800,9 @@ def make_pricing_basis_lst(entry):
             pricing_basis_lst.append(basis_mat_dict)
     return pricing_basis_lst
 
-def create_equip_id_dict():
+
+# TODO: determine if needed
+def create_equip_id_dict(excel_path):
     """
     Generates id dictionary for equipment
 
@@ -822,7 +812,7 @@ def create_equip_id_dict():
         A dictionary associating ids with unique equipment names
 
     """
-    equip_lib_df = get_equipment()
+    equip_lib_df = get_equipment(excel_path)
     equip_id_dict = {}
     equip_lib_dict = equip_lib_df.to_dict('records')
     for entry in equip_lib_dict:
@@ -830,6 +820,8 @@ def create_equip_id_dict():
         
     return equip_id_dict
 
+
+# TODO: get this working
 def equip_json_to_excel(json_path, excel_path):
     """
     Generates standalone equipment library in excel workbook based on data from
@@ -896,6 +888,7 @@ def equip_json_to_excel(json_path, excel_path):
 The section below is designed to populate the spent catalyst library
 """
 
+# TODO: identify excessive Excel reads
 def make_spent_cat_tables(excel_path):
     """
     Separates each table from the spent catalyst worksheet into its own python 
@@ -932,8 +925,8 @@ def make_spent_cat_tables(excel_path):
             elif row_values[0] == 'Table 5 - RCRA metals and Toxicity Characteristic Leaching Prodedure Limits. Estimated minimum concentrations of RCRA metals as wt. % in catalyst that would pass the TCLP threshold are provided; no warranty is given as to the accuracy or usefulness of these estimates.':
                 TCLP_start = rownum + 1
                 
-#    spent_cat_df = pd.read_excel(excel_path,
-#                                   sheet_name="Spent Cat Library",skiprows=3)
+    # spent_cat_df = pd.read_excel(excel_path,
+                                #    sheet_name="Spent Cat Library",skiprows=3)
         support_end = spent_cat.nrows - (metal_start - 2)
         metal_end = spent_cat.nrows - (hazard_start - 2)
         hazard_end = spent_cat.nrows - (catalyst_start - 2)
@@ -951,6 +944,8 @@ def make_spent_cat_tables(excel_path):
     cleaned_tables = [support_df,metal_df,hazard_df,catalyst_df,TCLP_df]
     return cleaned_tables
 
+
+# TODO: determine if needed (unused)
 def label_cuts(row):
     if type(row['Unnamed: 0']) == float:
         cut_marker = 'blank'
@@ -960,6 +955,8 @@ def label_cuts(row):
         cut_marker = 'data'
     return cut_marker
 
+
+# TODO: determine if needed (unused)
 def separate_tables(df):
     table_starts = []
     table_ends = []
@@ -1003,6 +1000,7 @@ def separate_tables(df):
         cleaned_tables.append(table)
     return cleaned_tables
             
+
 def make_support_dict(cleaned_tables, version='1.0.0'):
     """
     Creates a dictionary with the data for each support from the spent cat tables.
@@ -1061,7 +1059,7 @@ def make_support_dict(cleaned_tables, version='1.0.0'):
         # entry['loss_of_metal_fixed'], sensitivity_compliance['loss_of_metal_fixed'] = make_fixed_metal_loss_dict(entry)
         # entry['loss_of_catalyst_solids_slurry'], sensitivity_compliance['loss_of_catalyst_solids_slurry'] = make_slurry_support_loss_dict(entry)
         # entry['loss_of_metal_slurry'], sensitivity_compliance['loss_of_metal_slurry'] = make_slurry_support_loss_dict(entry)
-        sensitivity_compliance = {'loss_of_catalyst_solids_fixed':True, #workaround, the sensitivity compliance test for this section was not working so I set it to always return true
+        sensitivity_compliance = {'loss_of_catalyst_solids_fixed':True,  # TODO: workaround, the sensitivity compliance test for this section was not working so I set it to always return true
                                   'loss_of_metal_fixed':True,
                                   'loss_of_catalyst_solids_slurry':True,
                                   'loss_of_metal_slurry':True}
@@ -1079,6 +1077,8 @@ def make_support_dict(cleaned_tables, version='1.0.0'):
             entry.pop(item, None)
     return support_dict, sensitivity_compliance
 
+
+# TODO: determine if needed (unused)
 def create_support_id_dict(cleaned_tables):
     """
     Generates a dictionary of unique ids for each unique support name
@@ -1107,6 +1107,8 @@ def create_support_id_dict(cleaned_tables):
         
     return support_id_dict
 
+
+# TODO: determine if needed (unused)
 def make_fixed_support_loss_dict(entry):
     """
     Generates a dictionary with the low, baseline, and high levels for loss of
@@ -1132,6 +1134,8 @@ def make_fixed_support_loss_dict(entry):
                 sensitivity_compliant = False
     return fixed_support_loss_dict, sensitivity_compliant
 
+
+# TODO: determine if needed (unused)
 def make_fixed_metal_loss_dict(entry):
     """
     Generates a dictionary with the low, baseline, and high levels for loss of
@@ -1157,6 +1161,8 @@ def make_fixed_metal_loss_dict(entry):
                 sensitivity_compliant = False
     return fixed_metal_loss_dict, sensitivity_compliant
 
+
+# TODO: determine if needed (unused)
 def make_slurry_support_loss_dict(entry):
     """
     Generates a dictionary with the low, baseline, and high levels for loss of
@@ -1183,6 +1189,8 @@ def make_slurry_support_loss_dict(entry):
                 sensitivity_compliant = False
     return slurry_support_loss_dict, sensitivity_compliant
 
+
+# TODO: determine if needed (unused)
 def make_slurry_metal_loss_dict(entry):
     """
     Generates a dictionary with the low, baseline, and high levels for loss of
@@ -1208,6 +1216,7 @@ def make_slurry_metal_loss_dict(entry):
                 sensitivity_compliant = False
     return slurry_metal_loss_dict, sensitivity_compliant
 
+
 def make_incoming_dict(entry):
     """
     Generates a dictionary with the low, baseline, and high levels for incoming
@@ -1229,6 +1238,7 @@ def make_incoming_dict(entry):
                 sensitivity_compliant = False
     return incoming_dict, sensitivity_compliant
 
+
 def make_thermal_ox_dict(entry):
     """
     Generates a dictionary with the low, baseline, and high levels for thermal 
@@ -1240,6 +1250,7 @@ def make_thermal_ox_dict(entry):
     thermal_ox_dict['low'] = entry['Thermal ox. fee, low, $/lb']
     return thermal_ox_dict
 
+
 def make_metal_contaminant_dict(entry):
     """
     Generates a dictionary with the low, baseline, and high levels for the fee 
@@ -1250,6 +1261,7 @@ def make_metal_contaminant_dict(entry):
     metal_contaminant_dict['high'] = entry['Metal contaminant fee, high, $/ft3']
     metal_contaminant_dict['low'] = entry['Metal contaminant fee, low, $/ft3']
     return metal_contaminant_dict
+
 
 def make_metal_dict(cleaned_tables, version='1.0.0'):
     """
@@ -1278,12 +1290,12 @@ def make_metal_dict(cleaned_tables, version='1.0.0'):
             entry['unit'] = 'tons'
             #entry['unit'] = 'kg'
             #entry['spot_price'] = entry['spot_price']*0.00110231
-#        if type(entry['note']) == float:
-#            if math.isnan(entry['note']):
-#                entry['note'] = None
-#        if type(entry['refining_charge']) == float:
-#            if math.isnan(entry['refining_charge']):
-#                entry['refining_charge'] = None
+        # if type(entry['note']) == float:
+            # if math.isnan(entry['note']):
+                # entry['note'] = None
+        # if type(entry['refining_charge']) == float:
+            # if math.isnan(entry['refining_charge']):
+                # entry['refining_charge'] = None
         for key in entry:
             if type(entry[key]) == float:
                 if math.isnan(entry[key]):
@@ -1296,6 +1308,8 @@ def make_metal_dict(cleaned_tables, version='1.0.0'):
         entry['updatedOn'] = int(np.floor(time.time()))
     return metal_dict, sensitivity_compliance
 
+
+# TODO: determine if needed (unused)
 def create_metal_id_dict(cleaned_tables):
     """
     Creates metal id dict
@@ -1323,6 +1337,7 @@ def create_metal_id_dict(cleaned_tables):
         metal_id_dict[entry['name']] = gen_id()
         
     return metal_id_dict
+
 
 def make_metal_loss_dict(entry):
     """
@@ -1363,6 +1378,7 @@ def make_metal_loss_dict(entry):
                 metal_loss_dict['low'] = None
                 sensitivity_compliant = False
     return metal_loss_dict, sensitivity_compliant
+
 
 def make_hazard_dict(cleaned_tables, version="1.0.0"):
     """
@@ -1406,6 +1422,8 @@ def make_hazard_dict(cleaned_tables, version="1.0.0"):
             entry.pop(item, None)
     return hazard_dict
 
+
+# TODO: determine if needed (unused)
 def create_hazard_id_dict(cleaned_tables):
     """
     Creates hazard id dict
@@ -1430,6 +1448,7 @@ def create_hazard_id_dict(cleaned_tables):
         
     return hazard_id_dict
 
+
 def make_landfill_dict(entry):
     """
     Generates dictionary containing low, average, and high values for landfill fees.
@@ -1447,6 +1466,7 @@ def make_landfill_dict(entry):
         landfill_dict['high'] = None
     return landfill_dict
 
+
 def make_sale_dict(entry):
     """
     Generates dictionary containing low, average, and high values for sale values.
@@ -1463,6 +1483,7 @@ def make_sale_dict(entry):
     if math.isnan(sale_dict['high']):
        sale_dict['high'] = None
     return sale_dict
+
 
 def make_density_dict(cleaned_tables,version="1.0.0"):
     """
@@ -1485,6 +1506,8 @@ def make_density_dict(cleaned_tables,version="1.0.0"):
         #entry['density_unit'] = 'lb/ft3'
     return density_dict
 
+
+# TODO: determine if needed (unused)
 def create_density_id_dict(cleaned_tables):
     """
     Creates density id dict
@@ -1513,6 +1536,7 @@ def create_density_id_dict(cleaned_tables):
     
     return density_id_dict
 
+
 def spent_cat_to_json(excel_path, json_path):
     """
     Converts Spent catalyst worksheet from excel to JSON format.
@@ -1529,8 +1553,8 @@ def spent_cat_to_json(excel_path, json_path):
     None.
 
     """
-#    spent_cat_df = make_spent_cat_tables(excel_path)
-#    spent_cat_df['cut_marker'] = spent_cat_df.apply(lambda row: label_cuts(row), axis=1)
+    # spent_cat_df = make_spent_cat_tables(excel_path)
+    # spent_cat_df['cut_marker'] = spent_cat_df.apply(lambda row: label_cuts(row), axis=1)
     cleaned_tables = make_spent_cat_tables(excel_path)
     spent_cat_dict = {}
     spent_cat_dict['spent_cat_support'], sensitivity_compliance_support = make_support_dict(cleaned_tables)
@@ -1617,7 +1641,7 @@ def estimate_to_json(excel_path, json_path, version="1.0.0"):
             elif 'On-Stream Factor' in row_value:
                 est_dict['stream_factor'], est_sensitivity_compliance['stream_factor'] = locate_data(row_value, 'On-Stream Factor')
                 
-        est_equip_lst, equip_mass_unit, equip_time_unit, catalyst_or_AP, reference_design_production  = make_est_equip_lst(excel_path, est_dict['id'], version)
+        est_equip_lst, equip_mass_unit, equip_time_unit, catalyst_or_AP, reference_design_production = make_est_equip_lst(excel_path, est_dict['id'], version)
         est_dict['equip_mass_unit'] = equip_mass_unit
         est_dict['equip_time_unit'] = equip_time_unit
         est_dict['catalyst_or_AP'] = catalyst_or_AP
@@ -1636,26 +1660,26 @@ def estimate_to_json(excel_path, json_path, version="1.0.0"):
         est_dict['factored_capital_costs'] = make_est_cap_ex(excel_path, est_dict['id'], version)
         est_dict['factored_operating_costs'] = make_est_op_ex(excel_path, est_dict['id'], version)
         
-#        for rownum in range(equip.nrows):
-#            row_value = equip.row_values(rownum)
-#            if ' < select mass unit' in row_value:     
-#                tmp_lst = [i for i,x in enumerate(row_value) if x == ' < select mass unit']
-#                est_dict['equip_mass_unit'] = row_value[tmp_lst[0] - 1]
-#            elif ' < select time unit' in row_value:
-#                tmp_lst = [i for i,x in enumerate(row_value) if x == ' < select time unit']
-#                equip_time_unit = row_value[tmp_lst[0] - 1]
-#                if equip_time_unit == 'hour':
-#                    est_dict['equip_time_unit'] = 'hr'
-#                elif equip_time_unit == 'week':
-#                    est_dict['equip_time_unit'] = 'wk'
-#                else:
-#                    est_dict['equip_time_unit'] = equip_time_unit
-#            elif ' < select catalyst or AP' in row_value:
-#                tmp_lst = [i for i,x in enumerate(row_value) if x == ' < select catalyst or AP']
-#                est_dict['catalyst_or_AP'] = row_value[tmp_lst[0] - 1] #this entry shows up in the schema, but not the sample estimate I pulled from the web tool
-#            elif 'Reference Design Production Rate (do not enter a formula)' in row_value:
-#                tmp_lst = [i for i,x in enumerate(row_value) if x == 'Reference Design Production Rate (do not enter a formula)']
-#                est_dict['reference_design_production'] = row_value[tmp_lst[0] + 1]
+        # for rownum in range(equip.nrows):
+            # row_value = equip.row_values(rownum)
+            # if ' < select mass unit' in row_value:     
+                # tmp_lst = [i for i,x in enumerate(row_value) if x == ' < select mass unit']
+                # est_dict['equip_mass_unit'] = row_value[tmp_lst[0] - 1]
+            # elif ' < select time unit' in row_value:
+                # tmp_lst = [i for i,x in enumerate(row_value) if x == ' < select time unit']
+                # equip_time_unit = row_value[tmp_lst[0] - 1]
+                # if equip_time_unit == 'hour':
+                    # est_dict['equip_time_unit'] = 'hr'
+                # elif equip_time_unit == 'week':
+                    # est_dict['equip_time_unit'] = 'wk'
+                # else:
+                    # est_dict['equip_time_unit'] = equip_time_unit
+            # elif ' < select catalyst or AP' in row_value:
+                # tmp_lst = [i for i,x in enumerate(row_value) if x == ' < select catalyst or AP']
+                # est_dict['catalyst_or_AP'] = row_value[tmp_lst[0] - 1] #this entry shows up in the schema, but not the sample estimate I pulled from the web tool
+            # elif 'Reference Design Production Rate (do not enter a formula)' in row_value:
+                # tmp_lst = [i for i,x in enumerate(row_value) if x == 'Reference Design Production Rate (do not enter a formula)']
+                # est_dict['reference_design_production'] = row_value[tmp_lst[0] + 1]
                 
         for rownum in range(materials.nrows):
             row_value = materials.row_values(rownum)
@@ -1734,7 +1758,7 @@ def estimate_to_json(excel_path, json_path, version="1.0.0"):
                 for idx in range(0, len(est_dict[key])):
                     if type(est_dict[key][idx]) == float:
                         if math.isnan(est_dict[key][idx]):
-                            math.isnan[key][idx] = None
+                            est_dict[key][idx] = None
                     elif type(est_dict[key][idx]) == str:
                         if len(est_dict[key][idx]) == 0:
                             est_dict[key][idx] = None
@@ -1762,7 +1786,8 @@ def estimate_to_json(excel_path, json_path, version="1.0.0"):
         est_destination.write(est_json)
     return est_json, est_sensitivity_compliance, spent_cat_sensitivity_compliance, mat_sensitivity_compliance
 
-def locate_data(row_value,excel_name,sensitivity=True):
+
+def locate_data(row_value, excel_name, sensitivity=True):
     """
     A tool to find schema values based on the location of a text string in the 
     workbook.
@@ -1783,7 +1808,7 @@ def locate_data(row_value,excel_name,sensitivity=True):
         DESCRIPTION.
 
     """
-    tmp_lst = [i for i,x in enumerate(row_value) if x == excel_name]
+    tmp_lst = [i for i, x in enumerate(row_value) if x==excel_name]
     sensitivity_compliant = True
     if sensitivity:
         has_sensitivity = False
@@ -1815,6 +1840,7 @@ def locate_data(row_value,excel_name,sensitivity=True):
         output = row_value[tmp_lst[0]+1]
         return output
         
+
 def make_est_equip_lst(excel_path, est_id, version):
     """
     Generates a list of equipment associated with the estimate
@@ -1885,11 +1911,9 @@ def make_est_equip_lst(excel_path, est_id, version):
     elif template == 'Zeolite for FCC':
         process_lims = zeolite_lims
         
-    
-    
     for rownum in range(process_lims[0], process_lims[1]):
         row_value = equip.row_values(rownum)
-#        print(row_value)
+        # print(row_value)
         if 'Equipment Type' in row_value:
             df_start = rownum
         elif ' < select mass unit' in row_value:     
@@ -1909,15 +1933,15 @@ def make_est_equip_lst(excel_path, est_id, version):
         elif ' < select catalyst or AP' in row_value:
             tmp_lst = [i for i,x in enumerate(row_value) if x == ' < select catalyst or AP']
             catalyst_or_AP = row_value[tmp_lst[0] - 1] #this entry shows up in the schema, but not the sample estimate I pulled from the web tool
-        elif 'THIS PROCESS Design Production Rate, in Estimate Units' in row_value:
-            tmp_lst = [i for i,x in enumerate(row_value) if x == 'THIS PROCESS Design Production Rate, in Estimate Units']
+        elif 'Estimate Design Production Rate' in row_value:
+            tmp_lst = [i for i,x in enumerate(row_value) if x == 'Estimate Design Production Rate']
             reference_design_production = row_value[tmp_lst[0] + 1]
             if reference_design_production == "-----":
                 reference_design_production = None
             
     df = pd.read_excel(excel_path, sheet_name='3b Equip', skiprows=df_start, usecols='C:H', skipfooter=equip.nrows-process_lims[1])
-    #print('dataframe output directly below')
-    #print(df_start,df.head())
+    # print('dataframe output directly below')
+    # print(df_start,df.head())
     df = df.loc[np.isfinite(df['Quantity'])]
     equip_ids = get_ids('equip_id_dict') 
     est_equip_lst = []
@@ -1947,6 +1971,7 @@ def make_est_equip_lst(excel_path, est_id, version):
         
     return est_equip_lst, equip_mass_unit, equip_time_unit, catalyst_or_AP, reference_design_production
 
+
 def make_est_mat_lst(excel_path, est_id, version):
     """
     Generates a list of materials associated with the estimate.
@@ -1973,7 +1998,7 @@ def make_est_mat_lst(excel_path, est_id, version):
                 end_metal = entry[0]
                 break
     metal_source_df = metal_source_df[metal_source_df.index < end_metal]
-#    metal_source_df = metal_source_df[np.isfinite(metal_source_df['Quantity (Q)'])]
+    # metal_source_df = metal_source_df[np.isfinite(metal_source_df['Quantity (Q)'])]
     support_df = pd.read_excel(excel_path, sheet_name='2 Materials',
                                skiprows=support_df_start, usecols='C:P')
     end_support = 100
@@ -1983,7 +2008,7 @@ def make_est_mat_lst(excel_path, est_id, version):
                 end_support = entry[0]
                 break
     support_df = support_df[support_df.index < end_support]
-#    support_df = support_df[np.isfinite(support_df['Quantity (Q)'])]
+    # support_df = support_df[np.isfinite(support_df['Quantity (Q)'])]
     other_df = pd.read_excel(excel_path, sheet_name='2 Materials',
                              skiprows=other_df_start, usecols='C:P', skipfooter=4)
     end_other = 100
@@ -1993,7 +2018,7 @@ def make_est_mat_lst(excel_path, est_id, version):
                 end_other = entry[0]
                 break
     other_df = other_df[other_df.index < end_other]
-#    other_df = other_df[np.isfinite(other_df['Quantity (Q)'])]
+    # other_df = other_df[np.isfinite(other_df['Quantity (Q)'])]
     est_mat_lst = []
     mat_lib = materials_to_json(excel_path, None)
     mat_lib = json.loads(mat_lib)
@@ -2158,6 +2183,7 @@ def make_est_mat_lst(excel_path, est_id, version):
     print(sensitivity_lst)
     return est_mat_lst, sensitivity_lst
 
+
 def make_est_spent_cat(excel_path, est_id, version):
     """
     Generates a spent catalyst dictionary associated with the estimate.
@@ -2234,14 +2260,14 @@ def make_est_spent_cat(excel_path, est_id, version):
                 spent_cat_support_dict['planned_use'] = planned_use
         elif 'Catalyst solids after use' in row_value:
             spent_cat_support_dict['cat_solids_after_use'] = locate_data(row_value, 'Catalyst solids after use', False)
-#        elif 'Metal losses during use (typical)' in row_value:
-#            spent_cat_support_dict['metal_loss_during_use'] = locate_data(row_value, 'Metal losses during use (typical)', False)
+        # elif 'Metal losses during use (typical)' in row_value:
+            # spent_cat_support_dict['metal_loss_during_use'] = locate_data(row_value, 'Metal losses during use (typical)', False)
         elif 'Classification for Sale or Landfill' in row_value:
             hazard_name = locate_data(row_value, 'Classification for Sale or Landfill',False)
             if hazard_name:
                 spent_cat_hazard_dict['spent_cat_hazard_id'] = hazard_id_dict[hazard_name]
-        #elif 'Landfill cost' in row_value:
-        #    spent_cat_hazard_dict['landfill_fee'] = locate_data(row_value, 'Landfill cost')
+        # elif 'Landfill cost' in row_value:
+            # spent_cat_hazard_dict['landfill_fee'] = locate_data(row_value, 'Landfill cost')
         elif 'Catalyst/material type' in row_value:
             density_name = locate_data(row_value, 'Catalyst/material type', False)
             #, spent_cat_sensitivity_compliance['Catalyst/material type']
@@ -2253,8 +2279,8 @@ def make_est_spent_cat(excel_path, est_id, version):
                 spent_cat_metal_dict['spent_cat_metal'] = metal
                 break
         
-    #spent_cat_metal_dict['price_per_mass_unit_catalyst'] = spent_cat.cell() not sure which value we want here
-    #spent_cat_metal_dict['price_scaled'] again unsure of what value to pull here
+    # spent_cat_metal_dict['price_per_mass_unit_catalyst'] = spent_cat.cell() not sure which value we want here
+    # spent_cat_metal_dict['price_scaled'] again unsure of what value to pull here
     
     if support_name:
         for support in support_dict:
@@ -2272,9 +2298,10 @@ def make_est_spent_cat(excel_path, est_id, version):
         if density['id'] == spent_cat_density_dict['spent_cat_bulk_density_id']:
             spent_cat_density_dict['spent_cat_bulk_density'] = density
             break
-#    return spent_cat_dict
+    # return spent_cat_dict
     return spent_cat_metal_dict, spent_cat_support_dict, spent_cat_hazard_dict, spent_cat_density_dict, spent_cat_sensitivity_compliance
     
+
 def make_est_process_utilities(excel_path, est_id, version, basis_unit):
     """
     Generates a dictionary with the process utilities associated with the estimate.
@@ -2336,6 +2363,7 @@ def make_est_process_utilities(excel_path, est_id, version, basis_unit):
                 utility_dict['unit_cost']['baseline'] = entry['Unit Cost']
         utility_lst.append(utility_dict)
     return utility_lst
+
 
 def make_est_cap_ex(excel_path, est_id, version):
     """
@@ -2422,6 +2450,7 @@ def make_est_cap_ex(excel_path, est_id, version):
         cost_dict['estimate_id'] = est_id
         factored_capital_costs.append(cost_dict)
     return factored_capital_costs
+
 
 def make_est_op_ex(excel_path, est_id, version):
     """
@@ -2523,17 +2552,19 @@ def make_est_op_ex(excel_path, est_id, version):
         factored_operating_costs.append(cost_dict)
     return factored_operating_costs
 
+
 """
 The section below is used to add Ids to those objects which do not have ids specified
 """
 
 def get_ids(lib):
-#    if os.path.exists(os.getcwd() + '/all_ids.json'):
+    # if os.path.exists(os.getcwd() + '/all_ids.json'):
     with open(os.getcwd() + '/all_ids.json') as f:
         json_ids_str = f.read()
         json_ids_dict = json.loads(json_ids_str)
     id_dict = json_ids_dict[lib]
     return id_dict
+
 
 def add_id(lib, name):
     with open(os.getcwd() + '/all_ids.json','r') as f:

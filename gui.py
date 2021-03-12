@@ -3,5 +3,6 @@
 @author: kvanalls
 """
 
-import catcost_data_tools_main
-gui = catcost_data_tools_main.main()
+if __name__ == '__main__':
+    from catcost_data_tools import catcost_data_tools_main
+    catcost_data_tools_main.main()
