@@ -5,7 +5,7 @@ import unittest
 from catcost_data_tools import catcost_data_tools_main as ccdt
 
 
-TEST_INDEX = 9
+TEST_INDEX = 0
 TEST_XLSX = [f for f in os.listdir(os.path.join(os.getcwd(), 'tests', 'data')) if 'xlsx' in f]
 
 
@@ -530,7 +530,7 @@ class TestMakeEstEquipLst(unittest.TestCase):
 
 
 class TestMakeEstMatLst(unittest.TestCase):
-    def setUp(self, debug=True):
+    def setUp(self, debug=False):
         xlsx = os.path.join('tests', 'data', TEST_XLSX[TEST_INDEX])
         est_id = 'test_id'
         version = '0.0a'
@@ -546,7 +546,7 @@ class TestMakeEstMatLst(unittest.TestCase):
         self.assertEqual(len(self.result), 2)
 
     def test_make_est_mat_lst_0_data(self):
-        self.assertGreater(len(self.result[0]), 0)
+        self.assertGreaterEqual(len(self.result[0]), 0)
 
     def test_make_est_mat_lst_0_lst(self):
         self.assertIsInstance(self.result[0], list)
@@ -555,7 +555,7 @@ class TestMakeEstMatLst(unittest.TestCase):
         self.assertIsInstance(self.result[1], list)
 
     def test_make_est_mat_lst_1_data(self):
-        self.assertGreater(len(self.result[1]), 0)
+        self.assertGreaterEqual(len(self.result[1]), 0)
 
 
 class TestMakeEstSpentCat(unittest.TestCase):
