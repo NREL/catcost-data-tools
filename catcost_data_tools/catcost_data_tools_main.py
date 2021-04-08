@@ -2121,11 +2121,19 @@ def make_est_mat_lst(excel_path, est_id, version):
         support_dict['material_unit_price']['baseline'] = entry[baseline_key]
         support_dict['material_unit_price']['low'] = entry['Price low']
         support_dict['material_unit_price']['high'] = entry['Price high']
-        if support_dict['material_unit_price']['high'] < support_dict['material_unit_price']['baseline']:
-            support_dict['material_unit_price']['high'] = None
+        # TODO: more robust sensitivity detection
+        sensitivity_compliance = True
+        if support_dict['material_unit_price']['baseline'] and support_dict['material_unit_price']['high']:
+            if support_dict['material_unit_price']['high'] < support_dict['material_unit_price']['baseline']:
+                support_dict['material_unit_price']['high'] = None
+                sensitivity_compliance = False
+        else:
             sensitivity_compliance = False
-        if support_dict['material_unit_price']['low'] > support_dict['material_unit_price']['baseline']:
-            support_dict['material_unit_price']['low'] = None
+        if support_dict['material_unit_price']['baseline'] and support_dict['material_unit_price']['low']:
+            if support_dict['material_unit_price']['low'] > support_dict['material_unit_price']['baseline']:
+                support_dict['material_unit_price']['low'] = None
+                sensitivity_compliance = False
+        else:
             sensitivity_compliance = False
         sensitivity_lst.append(sensitivity_compliance)
         support_dict['updatedOn'] = int(np.floor(time.time()))
@@ -2167,11 +2175,19 @@ def make_est_mat_lst(excel_path, est_id, version):
         other_dict['material_unit_price']['baseline'] = entry[baseline_key]
         other_dict['material_unit_price']['low'] = entry['Price low']
         other_dict['material_unit_price']['high'] = entry['Price high']
-        if other_dict['material_unit_price']['high'] < other_dict['material_unit_price']['baseline']:
-            other_dict['material_unit_price']['high'] = None
+        # TODO: more robust sensitivity detection
+        sensitivity_compliance = True
+        if other_dict['material_unit_price']['baseline'] and other_dict['material_unit_price']['high']:
+            if other_dict['material_unit_price']['high'] < other_dict['material_unit_price']['baseline']:
+                other_dict['material_unit_price']['high'] = None
+                sensitivity_compliance = False
+        else:
             sensitivity_compliance = False
-        if other_dict['material_unit_price']['low'] > other_dict['material_unit_price']['baseline']:
-            other_dict['material_unit_price']['low'] = None
+        if other_dict['material_unit_price']['baseline'] and other_dict['material_unit_price']['low']:
+            if other_dict['material_unit_price']['low'] > other_dict['material_unit_price']['baseline']:
+                other_dict['material_unit_price']['low'] = None
+                sensitivity_compliance = False
+        else:
             sensitivity_compliance = False
         other_dict['updatedOn'] = int(np.floor(time.time()))
         sensitivity_lst.append(sensitivity_compliance)
@@ -2579,5 +2595,5 @@ def add_id(lib, name):
         g.write(json_ids_str)
     return new_id
         
-#main()
+# main()
         

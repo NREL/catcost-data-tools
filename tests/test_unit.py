@@ -5,11 +5,8 @@ import unittest
 from catcost_data_tools import catcost_data_tools_main as ccdt
 
 
-TEST_INDEX = 0
-TEST_XLSX = ['CatCost_FCC_estimate_v10_add_sensitivity_values.xlsx',
-             'CatCost_FCC_estimate_v12_labor_rate_48.xlsx',
-             'CatCost_v1-0-4.xlsx',
-             'ZSM-5_v9___fix_template_name_for_web.xlsx']
+TEST_INDEX = 9
+TEST_XLSX = [f for f in os.listdir(os.path.join(os.getcwd(), 'tests', 'data')) if 'xlsx' in f]
 
 
 class TestGetMatLib(unittest.TestCase):
@@ -533,12 +530,14 @@ class TestMakeEstEquipLst(unittest.TestCase):
 
 
 class TestMakeEstMatLst(unittest.TestCase):
-    def setUp(self, debug=False):
+    def setUp(self, debug=True):
         xlsx = os.path.join('tests', 'data', TEST_XLSX[TEST_INDEX])
         est_id = 'test_id'
         version = '0.0a'
         self.result = ccdt.make_est_mat_lst(xlsx, est_id, version)
-        if debug: print(self.result[1:])
+        if debug:
+            print(TEST_XLSX[TEST_INDEX])
+            print(self.result)
 
     def test_make_est_mat_lst_tuple(self):
         self.assertIsInstance(self.result, tuple)
@@ -549,11 +548,14 @@ class TestMakeEstMatLst(unittest.TestCase):
     def test_make_est_mat_lst_0_data(self):
         self.assertGreater(len(self.result[0]), 0)
 
-    def test_make_est_mat_lst_0_str(self):
+    def test_make_est_mat_lst_0_lst(self):
         self.assertIsInstance(self.result[0], list)
 
-    def test_make_est_mat_lst_1_str(self):
-        self.assertIsInstance(self.result[1], str)
+    def test_make_est_mat_lst_1_lst(self):
+        self.assertIsInstance(self.result[1], list)
+
+    def test_make_est_mat_lst_1_data(self):
+        self.assertGreater(len(self.result[1]), 0)
 
 
 class TestMakeEstSpentCat(unittest.TestCase):
