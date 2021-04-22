@@ -28,8 +28,8 @@ import logging
     # logging.error("current PATH: %s", os.environ['PATH'])
 
 
-if __name__=='__main__':
-    import catcost_data_tools_main
+if __name__ == '__main__':
+    from catcost_data_tools import catcost_data_tools_main
 
     # _append_run_path()
     catcost_data_tools_main.main()
