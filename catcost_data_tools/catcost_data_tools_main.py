@@ -16,8 +16,7 @@ import time
 from xlrd import open_workbook
 from collections import OrderedDict
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, \
-    QFileDialog, QPushButton, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon
     
@@ -96,7 +95,7 @@ class App(QMainWindow):
                 self.output_file = fileName
             # print(self.input_file,'\n',self.output_file)
             self.statusBar().showMessage('Converting excel materials library to JSON file')
-            materials_to_json(self.input_file, self.output_file)
+            materials_to_json(self.input_file,self.output_file)
             if os.path.exists(self.output_file):
                 self.statusBar().showMessage('Ready')
             else:
@@ -113,7 +112,7 @@ class App(QMainWindow):
     def openEquipToJsonFileNameDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self, "Choose the Excel file containing the desired equipment library","","Excel Workbooks (*.xlsx)",options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self,"Choose the Excel file containing the desired equipment library","","Excel Workbooks (*.xlsx)",options=options)
         if fileName:
             self.input_file = fileName
             self.saveEquipToJsonFileDialog()
@@ -129,7 +128,7 @@ class App(QMainWindow):
                 self.output_file = fileName
             # print(self.input_file,'\n',self.output_file)
             self.statusBar().showMessage('Converting excel equipment library to JSON file')
-            equip_to_json(self.input_file, self.output_file)
+            equip_to_json(self.input_file,self.output_file)
             if os.path.exists(self.output_file):
                 self.statusBar().showMessage('Ready')
             else:
@@ -190,9 +189,7 @@ class App(QMainWindow):
     def openEstimateToJsonFileNameDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getOpenFileName(self,
-            "Choose the Excel file containing the desired estimate", "",
-            "Excel Workbooks (*.xlsx)", options=options)
+        fileName, _ = QFileDialog.getOpenFileName(self,"Choose the Excel file containing the desired estimate","","Excel Workbooks (*.xlsx)",options=options)
         if fileName:
             self.input_file = fileName
             self.saveEstimateToJsonFileDialog()
@@ -200,9 +197,7 @@ class App(QMainWindow):
     def saveEstimateToJsonFileDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self,
-            "Enter the json location to save the estimate", "",
-            "JSON Files (*.json)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(self,"Enter the json location to save the estimate","","JSON Files (*.json)",options=options)
         if fileName:
             if fileName.split('.')[-1] != 'json':
                 self.output_file = fileName + '.json'
@@ -212,8 +207,7 @@ class App(QMainWindow):
             # print(self.input_file,'\n',self.output_file)
             est_json, est_sensitivity_compliance, spent_cat_sensitivity_compliance, mat_sensitivity_compliance = estimate_to_json(self.input_file,self.output_file)
             if not all(est_sensitivity_compliance.values()):
-                sensitivity_message = QMessageBox.information(self, 'Sensitivity compliance error',
-                    'A sensitivity value is incorrectly higher or lower than the baseline. It has been changed to null')
+                sensitivity_message = QMessageBox.information(self,'Sensitivity compliance error','A sensitivity value is incorrectly higher or lower than the baseline. It has been changed to null')
                 for key in est_sensitivity_compliance.keys():
                     if not est_sensitivity_compliance[key]:
                         sensitivity_message = QMessageBox.information(self,'Sensitivity compliance error','The entry with noncompliant sensitivity inputs is %s' %key)
@@ -446,20 +440,17 @@ def materials_to_json(excel_path, json_path, complete=False, version="1.0.0", re
     mat_lib_df = mat_lib_df[mat_lib_df['Quote Source'] != 'IHS PEP quote']
     #mat_lib_df = mat_lib_df[mat_lib_df['Bulk Quote Units'] != 'cyl']
         
-<<<<<<< HEAD:catcost_data_tools_main.py
-    clean_up_lst = \
-        ['Bulk Quote Price ($)', 'Bulk Quote Quantity', 'Bulk Quote Units',
-         'Bulk quote quantity in model units',
-         'Lab Forecast Unit Price (Output Mass Units)',
-         'Lab Log-Log Intercept', 'Lab Log-Log Slope', 'Lab Price 1', 
-         'Lab Price 2', 'Lab Price 3', 'Lab Price 4', 'Lab Q Model Units 1',
-         'Lab Q Model Units 2', 'Lab Q Model Units 3', 'Lab Q Model Units 4',
-         'Lab Quantity 1', 'Lab Quantity 2', 'Lab Quantity 3', 'Lab Quantity 4',
-         'Lab Quote Count', 'Lab Unit P 1', 'Lab Unit P 2', 'Lab Unit P 3',
-         'Lab Unit P 4', 'Lab Units', 'Lab-Scale Log Fit?', 'Quote Access Date',
-         'Quote Source', 'Quote Year', 'Unit price', 'Unit price dimensions',
-         'Unit price in quote year', 'lab_scale_units', 'bulk_quote_units']
-    #list of unnecessary keys removed from json file
+    clean_up_lst = ["Bulk Quote Price ($)","Bulk Quote Quantity",'Bulk Quote Units',
+                    'Bulk quote quantity in model units','Lab Forecast Unit Price (Output Mass Units)',
+                    'Lab Log-Log Intercept','Lab Log-Log Slope','Lab Price 1', 
+                    'Lab Price 2','Lab Price 3','Lab Price 4','Lab Q Model Units 1',
+                    'Lab Q Model Units 2','Lab Q Model Units 3','Lab Q Model Units 4',
+                    'Lab Quantity 1','Lab Quantity 2','Lab Quantity 3', 'Lab Quantity 4',
+                    'Lab Quote Count','Lab Unit P 1','Lab Unit P 2','Lab Unit P 3',
+                    'Lab Unit P 4','Lab Units','Lab-Scale Log Fit?','Quote Access Date',
+                    'Quote Source','Quote Year','Unit price','Unit price dimensions',
+                    'Unit price in quote year', 'lab_scale_units', 'bulk_quote_units']
+    # list of unnecessary keys removed from json file
     mat_lib_dict = mat_lib_df.to_dict('records')
     # mat_lib_dict = OrderedDict([('name', mat_lib_dict['name']),('type',mat_lib_dict['type']),('molecularWeight',mat_lib_dict['molecularWeight']),
                                 # ('density',mat_lib_dict['density']),('concentration',mat_lib_dict['concentration']),('version',mat_lib_dict['version']),
@@ -742,7 +733,7 @@ def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
                                         "BM Factor (not in use)": "bm_factor",
                                         "Installation Factor (Garrett)": "installation_factor",
                                         "Note": "note", "Source": "source",
-                                        "CEPCI": "cepci", "NF Refinery": "nf_refinery",
+                                        "CEPCI": "cepci","NF Refinery": "nf_refinery",
                                         "Labor Factor": "labor_factor"})
     equip_df = equip_df[equip_df.size_unit.notnull()]
     nrows = len(equip_df)
@@ -753,7 +744,7 @@ def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
     equip_df = equip_df.drop(['n / c'], 1)
     equip_df['function_type'] = equip_df.apply(lambda row: rename_func_type(row), axis=1)
     equip_df = equip_df.drop(['Function Type'],1)
-    clean_up_lst = ['Pricing Basis Material', 'Material 1', 'Material 2',
+    clean_up_lst = ['Pricing Basis Material','Material 1','Material 2',
                     'Material 3', 'Material 4', 'Material 5', 'Material 6',
                     'Material 7', 'Material 8', 'Material 9', 'Material 10',
                     'Factor 1', 'Factor 2', 'Factor 3', 'Factor 4', 'Factor 5',
@@ -790,7 +781,7 @@ def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
             entry.pop(item, None)
     equip_json = json.dumps(equip_dict,indent=2)
     if json_path != None:
-        with open(json_path, 'w') as equip_json_out:
+        with open(json_path,'w') as equip_json_out:
             equip_json_out.write(equip_json)
     return equip_json
     
@@ -1650,8 +1641,7 @@ def estimate_to_json(excel_path, json_path, version="1.0.0"):
             elif 'On-Stream Factor' in row_value:
                 est_dict['stream_factor'], est_sensitivity_compliance['stream_factor'] = locate_data(row_value, 'On-Stream Factor')
                 
-        est_equip_lst, equip_mass_unit, equip_time_unit, catalyst_or_AP, \
-            reference_design_production = make_est_equip_lst(excel_path, est_dict['id'], version)
+        est_equip_lst, equip_mass_unit, equip_time_unit, catalyst_or_AP, reference_design_production = make_est_equip_lst(excel_path, est_dict['id'], version)
         est_dict['equip_mass_unit'] = equip_mass_unit
         est_dict['equip_time_unit'] = equip_time_unit
         est_dict['catalyst_or_AP'] = catalyst_or_AP
@@ -1880,14 +1870,11 @@ def make_est_equip_lst(excel_path, est_id, version):
     nanoparticle_flow_lims = []
     wet_impregnation_lims = []
     zeolite_lims = []
-    template = ''
     for rownum in range(equip.nrows):
         row_value = equip.row_values(rownum)
-        # print(row_value)
+        #print(row_value)
         nonempty_rowval = [x for x in row_value if x != '']
-        # if 'Select a Process Template or Choose "Custom Process"' in row_value:
-        if 'Select a Process Template or User-Entered Custom Process' in row_value:
-            if DEBUG: print('Template row')
+        if 'Select a Process Template or Choose "Custom Process"' in row_value:
             template_row = equip.row_values(rownum + 1)
             template = [x for x in template_row if x != '']
             try:
@@ -1895,7 +1882,6 @@ def make_est_equip_lst(excel_path, est_id, version):
             except IndexError:
                 template = 'Custom Process'
         elif nonempty_rowval:
-            if DEBUG: print('Nonempty row')
             if type(nonempty_rowval[0]) == str:
                 if 'User Entry' in nonempty_rowval[0]:
                     user_entry_lims.append(rownum)
@@ -1911,10 +1897,6 @@ def make_est_equip_lst(excel_path, est_id, version):
                 elif 'Process Template: Zeolite for FCC' in nonempty_rowval[0]:
                     zeolite_lims.append(rownum)
     
-    if template == '':
-        template = 'Custom Process'
-
-    if DEBUG: print(template)
     if template == 'Custom Process':
         process_lims = user_entry_lims
     elif template == 'Metal Carbide on Metal Oxide':
@@ -2227,8 +2209,7 @@ def make_est_spent_cat(excel_path, est_id, version):
     support_id_dict = get_ids('support_id_dict')
     hazard_id_dict = get_ids('hazard_id_dict')
     density_id_dict = get_ids('density_id_dict')
-    # spent_cat_dict, sensitivity_compliance_support, sensitivity_compliance_metal = spent_cat_to_json(excel_path,None)
-    spent_cat_dict, _, _ = spent_cat_to_json(excel_path, None)
+    spent_cat_dict, sensitivity_compliance_support, sensitivity_compliance_metal = spent_cat_to_json(excel_path,None)
     spent_cat_dict = json.loads(spent_cat_dict)
     metal_dict = spent_cat_dict['spent_cat_metal']
     support_dict = spent_cat_dict['spent_cat_support']
@@ -2426,12 +2407,10 @@ def make_est_cap_ex(excel_path, est_id, version):
             fci_end = rownum
         
     direct_cap_ex_df = pd.read_excel(excel_path, sheet_name='3d CapEx', 
-                                     skiprows=direct_capital_start, usecols='C:H',
-                                     skipfooter=fci_end-direct_end)
+                                     skiprows=direct_capital_start, usecols='C:H', skipfooter=fci_end - direct_end)
     direct_cap_ex_df.columns = ['Direct Capital','Base','Low','High','Units','Total Cost']
     indirect_cap_ex_df = pd.read_excel(excel_path, sheet_name='3d CapEx', 
-                                       skiprows=indirect_capital_start, usecols='C:H',
-                                       skipfooter=fci_end-indirect_end)
+                                       skiprows=indirect_capital_start, usecols='C:H', skipfooter=fci_end - indirect_end)
     indirect_cap_ex_df.columns = ['Indirect Capital','Base','Low','High','Units','Total Cost']
     fci_df = pd.read_excel(excel_path, sheet_name='3d CapEx',
                            skiprows=fci_start, usecols='C:H', skipfooter=1)
@@ -2594,21 +2573,12 @@ def make_est_op_ex(excel_path, est_id, version):
 The section below is used to add Ids to those objects which do not have ids specified
 """
 
-<<<<<<< HEAD:catcost_data_tools_main.py
-def get_ids(lib, name='all_ids.json'):
-#    if os.path.exists(os.getcwd() + '/all_ids.json'):
-    try:
-        with open(os.path.join(os.getcwd(), name), 'r') as f:
-            json_ids_str = f.read()
-        try:
-            json_ids_dict = json.loads(json_ids_str)
-            id_dict = json_ids_dict[lib]
-        except json.JSONDecodeError:
-            id_dict = {}
-    except FileNotFoundError:
-        # create file
-        Path(os.path.join(os.getcwd(), name)).touch()
-        id_dict = {}
+def get_ids(lib):
+    # if os.path.exists(os.getcwd() + '/all_ids.json'):
+    with open(os.getcwd() + '/all_ids.json') as f:
+        json_ids_str = f.read()
+        json_ids_dict = json.loads(json_ids_str)
+    id_dict = json_ids_dict[lib]
     return id_dict
 
 
