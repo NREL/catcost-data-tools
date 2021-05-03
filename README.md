@@ -6,7 +6,7 @@ This repository contains Python scripts to convert estimates from the Excel vers
 
 ## Getting Started - GUI executable
 
-Download an executable for your platform from [/releases/latest]()
+Download an executable for your platform from [/releases/latest](https://github.com/NREL/catcost-data-tools/releases/latest)
 
 ## Getting Started - Python Scripting
 
