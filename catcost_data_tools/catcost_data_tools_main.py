@@ -25,6 +25,11 @@ from PyQt5.QtGui import QIcon
 The section below uses PyQt5 to generate the user interface
 """
 
+
+with open(os.path.join(os.getcwd(), 'default', 'VERSION'), 'r') as f:
+    VERSION = f.read().strip()
+
+
 class App(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -312,7 +317,7 @@ def make_price_dict(entry):
     return price_dict
     
 
-def materials_to_json(excel_path, json_path, complete=False, version="1.0.0", remove_proprietary=True):
+def materials_to_json(excel_path, json_path, complete=False, version=VERSION, remove_proprietary=True):
     """
     Converts the materials library in an excel estimate to a json file for the webtool
 
@@ -621,7 +626,7 @@ def rename_func_type(row):  # workaround to match names of function types betwee
     return new_function_type
 
 
-def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
+def equip_to_json(excel_path, json_path, complete=False, version=VERSION):
     """
     Converts Excel equipment library to json equipment library.
 
@@ -924,7 +929,7 @@ def separate_tables(df):
     return cleaned_tables
             
 
-def make_support_dict(cleaned_tables, version='1.0.0'):
+def make_support_dict(cleaned_tables, version=VERSION):
     """
     Creates a dictionary with the data for each support from the spent cat tables.
 
@@ -1186,7 +1191,7 @@ def make_metal_contaminant_dict(entry):
     return metal_contaminant_dict
 
 
-def make_metal_dict(cleaned_tables, version='1.0.0'):
+def make_metal_dict(cleaned_tables, version=VERSION):
     """
     Generates metal dictionary from cleaned tables pulled from excel.
     """
@@ -1304,7 +1309,7 @@ def make_metal_loss_dict(entry):
     return metal_loss_dict, sensitivity_compliant
 
 
-def make_hazard_dict(cleaned_tables, version="1.0.0"):
+def make_hazard_dict(cleaned_tables, version=VERSION):
     """
     Generates dictionary with hazard costs from cleaned tables from spent catalyst.
     Missing sensitivity compliance.
@@ -1409,7 +1414,7 @@ def make_sale_dict(entry):
     return sale_dict
 
 
-def make_density_dict(cleaned_tables,version="1.0.0"):
+def make_density_dict(cleaned_tables, version=VERSION):
     """
     Generates dictionary containing density values from spent catalyst tables
     """
@@ -1496,7 +1501,7 @@ def spent_cat_to_json(excel_path, json_path):
 The following section is designed to write catalyst estimates from the excel tool
 to json format for upload to the webtool
 """
-def estimate_to_json(excel_path, json_path, version="1.0.0"):
+def estimate_to_json(excel_path, json_path, version=VERSION):
     """
     Converts the an excel workbook containing a CatCost estimate to a JSON file
     that can be uploaded to the webtool.
