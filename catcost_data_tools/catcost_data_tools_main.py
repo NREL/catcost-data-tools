@@ -243,83 +243,6 @@ def get_materials_lib(excel_path):
     return ccm_mat_lib_df
 
 
-# TODO: delete get_icis (not used)
-def get_icis():
-    """
-    gathers the ICIS price data in a pandas dataframe to integrate it into the materials library
-    """
-    icis_df = pd.read_excel("C:\\Users\\mjankous\\Documents\\CCM\\ICIS_price_spreadsheet.xlsx",
-                            sheet_name="ICIS_prices", skiprows=10, usecols=[15,6,8,11,12,13,14,18,19])
-    icis_df = icis_df.rename(columns={"Full Name":"Material Name",
-                                      "Quantity":"Bulk Quote Quantity",
-                                      "Corrected Units":"Bulk Quote Units",
-                                      "Price Avg":"Bulk Quote Price ($)",
-                                      "Year":"Quote Year",
-                                      "Unit Price Average":"Unit Price",
-                                      "Unit Price Dimensions":"Unit price dimensions"})
-    nrows = len(icis_df)
-    icis_df['Material Type'] = [np.nan] * nrows
-    icis_df['MW (g/mol)'] = [np.nan] * nrows
-    icis_df['Concentration (%)'] = [np.nan] * nrows
-    icis_df['Lab-Scale Log Fit?'] = [np.nan] * nrows
-    icis_df['Lab Quantity 1'] = [np.nan] * nrows
-    icis_df['Lab Quantity 2'] = [np.nan] * nrows
-    icis_df['Lab Quantity 3'] = [np.nan] * nrows
-    icis_df['Lab Quantity 4'] = [np.nan] * nrows
-    icis_df['Lab Units'] = [np.nan] * nrows
-    icis_df['Lab Price 1'] = [np.nan] * nrows
-    icis_df['Lab Price 2'] = [np.nan] * nrows
-    icis_df['Lab Price 3'] = [np.nan] * nrows
-    icis_df['Lab Price 4'] = [np.nan] * nrows
-    icis_df['Quote Source'] = ['ICIS'] * nrows
-    icis_df['Quote Access Date'] = ['?'] * nrows
-    icis_df['Notes'] = [np.nan] * nrows
-    icis_df['Lab Quote Count'] = [np.nan] * nrows #I don't know what this is supposed to represent
-    icis_df['Lab Q Model Units 1'] = [np.nan] * nrows
-    icis_df['Lab Q Model Units 2'] = [np.nan] * nrows
-    icis_df['Lab Q Model Units 3'] = [np.nan] * nrows
-    icis_df['Lab Q Model Units 4'] = [np.nan] * nrows
-    icis_df['Lab Unit P 1'] = [np.nan] * nrows
-    icis_df['Lab Unit P 2'] = [np.nan] * nrows
-    icis_df['Lab Unit P 3'] = [np.nan] * nrows
-    icis_df['Lab Unit P 4'] = [np.nan] * nrows
-    icis_df['Lab Log-Log Slope'] = [np.nan] * nrows
-    icis_df['Lab Log-Log Intercept'] = [np.nan] * nrows
-    icis_df['Basis Cell'] = [np.nan] * nrows
-    icis_df['Lab Forcast Unit Price (Output Mass Units)'] = [np.nan] * nrows
-    icis_df['Bulk quote quantity in model units'] = [np.nan] * nrows
-    icis_df['Unit price in quote year'] = [np.nan] * nrows
-    icis_df['Unit Price'] = [np.nan] * nrows    #comment this out to use original calculations
-    icis_df = icis_df[["Material Name",'Material Type','MW (g/mol)','Density (g/mL)',
-             'Concentration (%)','Lab-Scale Log Fit?','Lab Quantity 1',
-             'Lab Quantity 2','Lab Quantity 3','Lab Quantity 4','Lab Units',
-             'Lab Price 1','Lab Price 2','Lab Price 3','Lab Price 4',
-             "Bulk Quote Price ($)","Bulk Quote Quantity","Bulk Quote Units",
-             "Quote Year",'Quote Source','Quote Access Date','Notes',
-             'Lab Quote Count','Lab Q Model Units 1','Lab Q Model Units 2',
-             'Lab Q Model Units 3','Lab Q Model Units 4','Lab Unit P 1',
-             'Lab Unit P 2','Lab Unit P 3','Lab Unit P 4','Lab Log-Log Slope',
-             'Lab Log-Log Intercept','Basis Cell',
-             'Lab Forcast Unit Price (Output Mass Units)',
-             'Bulk quote quantity in model units','Unit price in quote year',
-             "Unit Price","Unit price dimensions"]]
-    icis_df['Bulk Quote Units'] = icis_df.apply(lambda row: rename_tons(row), axis=1)
-    return icis_df
-
-
-# TODO: delete rename_tons (only for get_icis)
-def rename_tons(row):
-    #renames instances of singular ton from ICIS database to match format of current materials library
-    unit = row['Bulk Quote Units']
-    if unit == 'ton':
-        new_unit = 'tons'
-    elif unit == 'tonne':
-        new_unit = 'tonnes'
-    else:
-        new_unit = unit
-    return new_unit
-
-
 def gen_id():
     #randomly creates a uuid to be used on a material
     an_id = str(uuid.uuid4())
@@ -466,7 +389,7 @@ def materials_to_json(excel_path, json_path, complete=False, version="1.0.0", re
         try:
             entry["id"] = mat_id_dict[entry['name']]
         except KeyError:
-            entry['id'] = add_id('mat_id_dict',entry['name'])
+            entry['id'], mat_id_dict = add_id('mat_id_dict',entry['name'])
         entry["updatedOn"] = date_to_str(entry)[0]
 
         # removes any columns listed in the clean up list
@@ -773,7 +696,7 @@ def equip_to_json(excel_path, json_path, complete=False, version="1.0.0"):
         try:
             entry['id'] = equip_id_dict[entry['name']]
         except KeyError:
-            entry['id'] = add_id('equip_id_dict',entry['name'])
+            entry['id'], equip_id_dict = add_id('equip_id_dict', entry['name'])
         pricing_basis_lst = make_pricing_basis_lst(entry)
         if pricing_basis_lst:
             entry['pricing_basis_materials'] = pricing_basis_lst
@@ -1068,7 +991,7 @@ def make_support_dict(cleaned_tables, version='1.0.0'):
         try:
             entry['id'] = support_id_dict[entry['name']]
         except KeyError:
-            entry['id'] = add_id('support_id_dict',entry['name'])
+            entry['id'], support_id_dict = add_id('support_id_dict',entry['name'])
         for key in entry.keys():
             if type(entry[key]) == float:
                 if math.isnan(entry[key]):
@@ -1268,11 +1191,12 @@ def make_metal_dict(cleaned_tables, version='1.0.0'):
     Generates metal dictionary from cleaned tables pulled from excel.
     """
     metal_df = cleaned_tables[1]
-    metal_df = metal_df.rename(columns={'Metal':'name', 
-                                        'Refining charge, $/troy oz recovered':'refining_charge',
-                                        'Note':'note', 'PGM/Noble (Refining charge yes/no)':'has_refining_charge',
-                                        'Spot Price ($)':'spot_price','Unit':'unit',
-                                        'Year':'year','Source':'source'})
+    metal_df = metal_df.rename(columns={'Metal': 'name', 
+                                        'Refining charge, $/troy oz recovered': 'refining_charge',
+                                        'Note': 'note', 'PGM/Noble (Refining charge yes/no)': 'has_refining_charge',
+                                        'Precious metal? (Refining charge yes/no)': 'has_refining_charge',
+                                        'Spot Price ($)': 'spot_price', 'Unit': 'unit',
+                                        'Year': 'year', 'Source': 'source'})
     metal_dict = metal_df.to_dict('records')
     clean_up_lst = ['Price $ / Model Mass Unit','Price Scaled to Basis Year','Units',
                     'Loss during refining, low, %','Loss during refining, high, %','Loss during refining, ave, %']
@@ -1304,7 +1228,7 @@ def make_metal_dict(cleaned_tables, version='1.0.0'):
         try:
             entry['id'] = metal_id_dict[entry['name']]
         except KeyError:
-            entry['id'] = add_id('metal_id_dict',entry['name'])
+            entry['id'], metal_id_dict = add_id('metal_id_dict',entry['name'])
         entry['updatedOn'] = int(np.floor(time.time()))
     return metal_dict, sensitivity_compliance
 
@@ -1410,7 +1334,7 @@ def make_hazard_dict(cleaned_tables, version="1.0.0"):
         try:
             entry['id'] = hazard_id_dict[entry['name']]
         except KeyError:
-            entry['id'] = add_id('hazard_id_dict',entry['name'])
+            entry['id'], hazard_id_dict = add_id('hazard_id_dict',entry['name'])
         entry['updatedOn'] = int(np.floor(time.time()))
         entry['version'] = version
         entry['landfill_fee'] = make_landfill_dict(entry)
@@ -1500,7 +1424,7 @@ def make_density_dict(cleaned_tables,version="1.0.0"):
         try:
             entry['id'] = density_id_dict[entry['name']]
         except KeyError:
-            entry['id'] = add_id('density_id_dict',entry['name'])
+            entry['id'], density_id_dict = add_id('density_id_dict',entry['name'])
         entry['version'] = version
         entry['updatedOn'] = int(np.floor(time.time()))
         #entry['density_unit'] = 'lb/ft3'
@@ -1825,7 +1749,7 @@ def locate_data(row_value, excel_name, sensitivity=True):
                 tmp_dict['high'] = None
             has_sensitivity = True
         if tmp_dict['baseline']:
-            print(tmp_dict)
+            # print(tmp_dict)
             if has_sensitivity:
                 if tmp_dict['high']:
                     if tmp_dict['high'] < tmp_dict['baseline']:
@@ -1864,52 +1788,32 @@ def make_est_equip_lst(excel_path, est_id, version):
             if sheet.name == '3b Equip':
                 equip = sheet
                 break
-    user_entry_lims = []
-    metal_carbide_lims = []
-    nanoparticle_batch_lims = []
-    nanoparticle_flow_lims = []
-    wet_impregnation_lims = []
-    zeolite_lims = []
+    process_lims = []
+    template = 'xkcd'
     for rownum in range(equip.nrows):
         row_value = equip.row_values(rownum)
-        #print(row_value)
         nonempty_rowval = [x for x in row_value if x != '']
-        if 'Select a Process Template or Choose "Custom Process"' in row_value:
-            template_row = equip.row_values(rownum + 1)
-            template = [x for x in template_row if x != '']
-            try:
-                template = template[0]
-            except IndexError:
-                template = 'Custom Process'
-        elif nonempty_rowval:
+        if nonempty_rowval:
             if type(nonempty_rowval[0]) == str:
-                if 'User Entry' in nonempty_rowval[0]:
-                    user_entry_lims.append(rownum)
-                elif 'Process Template: Metal Carbide on Metal Oxide' in nonempty_rowval[0]:
-                    metal_carbide_lims.append(rownum)
-                    #print('found metal carbide template start')
-                elif 'Process Template: Nanoparticles - Batch Synthesis' in nonempty_rowval[0]:
-                    nanoparticle_batch_lims.append(rownum)
-                elif 'Process Template: Nanoparticles - Flow Synthesis' in nonempty_rowval[0]:
-                    nanoparticle_flow_lims.append(rownum)
-                elif 'Process Template: Wet Impregnation - Metal on Metal Oxide' in nonempty_rowval[0]:
-                    wet_impregnation_lims.append(rownum)
-                elif 'Process Template: Zeolite for FCC' in nonempty_rowval[0]:
-                    zeolite_lims.append(rownum)
+                if 'select a process template' in nonempty_rowval[0].lower():
+                    template_row = rownum + 1
+                    # choose first nonempty value
+                    try:
+                        template = next(v for v in equip.row_values(template_row) if v)
+                    except StopIteration:
+                        template = '_empty_'
+
+                elif template in nonempty_rowval[0] and \
+                    ('process template:' in nonempty_rowval[0].lower() or 'user entry:' in nonempty_rowval[0].lower()):
+                    if rownum > template_row + 1:  # trivial solution trap
+                        process_lims.append(rownum)
+
+                # TODO: convert to while loop
+                if len(process_lims) == 2:
+                    break
     
-    if template == 'Custom Process':
-        process_lims = user_entry_lims
-    elif template == 'Metal Carbide on Metal Oxide':
-        process_lims = metal_carbide_lims
-        #print(process_lims)
-    elif template == 'Nanoparticles - Batch Synthesis':
-        process_lims = nanoparticle_batch_lims
-    elif template == 'Nanoparticles - Flow Synthesis':
-        process_lims = nanoparticle_flow_lims
-    elif template == 'Wet Impregnation - Metal on Metal Oxide':
-        process_lims = wet_impregnation_lims
-    elif template == 'Zeolite for FCC':
-        process_lims = zeolite_lims
+    if len(process_lims) == 0:
+        process_lims = [17, 83]
         
     for rownum in range(process_lims[0], process_lims[1]):
         row_value = equip.row_values(rownum)
@@ -1933,9 +1837,11 @@ def make_est_equip_lst(excel_path, est_id, version):
         elif ' < select catalyst or AP' in row_value:
             tmp_lst = [i for i,x in enumerate(row_value) if x == ' < select catalyst or AP']
             catalyst_or_AP = row_value[tmp_lst[0] - 1] #this entry shows up in the schema, but not the sample estimate I pulled from the web tool
-        elif 'Estimate Design Production Rate' in row_value:
-            tmp_lst = [i for i,x in enumerate(row_value) if x == 'Estimate Design Production Rate']
-            reference_design_production = row_value[tmp_lst[0] + 1]
+        elif 'estimate design production rate' in \
+            [v.lower() for v in row_value if isinstance(v, str)]:
+            c = row_value.index(next(s for s in row_value if s))  # chooses first populated column
+            # tmp_lst = [i for i,x in enumerate(row_value) if x.lower() == 'estimate design production rate']
+            reference_design_production = row_value[c + 1]
             if reference_design_production == "-----":
                 reference_design_production = None
             
@@ -1943,15 +1849,16 @@ def make_est_equip_lst(excel_path, est_id, version):
     # print('dataframe output directly below')
     # print(df_start,df.head())
     df = df.loc[np.isfinite(df['Quantity'])]
-    equip_ids = get_ids('equip_id_dict') 
     est_equip_lst = []
     equip_lib = equip_to_json(excel_path, None)
     equip_lib = json.loads(equip_lib)
+    equip_ids = get_ids('equip_id_dict') 
     for entry in df.iterrows():
         entry = entry[1]
         equip_dict = {}
         equip_dict['id'] = gen_id()
         equip_dict['estimate_id'] = est_id
+        # TODO: handle new items not in equip list or all_ids?
         equip_dict['equipment_id'] = equip_ids[entry['Equipment Type']]
         equip_dict['construction_material'] = {}
         equip_dict['construction_material']['name'] = entry['Material of Construction']
@@ -2063,7 +1970,7 @@ def make_est_mat_lst(excel_path, est_id, version):
         if metal_dict['material_unit_price']['high'] < metal_dict['material_unit_price']['baseline']:
             metal_dict['material_unit_price']['high'] = None
             sensitivity_compliance = False
-            print('caught unit price')
+            # print('caught unit price')
         if metal_dict['material_unit_price']['low'] > metal_dict['material_unit_price']['baseline']:
             metal_dict['material_unit_price']['low'] = None
             sensitivity_compliance = False
@@ -2087,8 +1994,8 @@ def make_est_mat_lst(excel_path, est_id, version):
         support_dict['id'] = gen_id()
         support_dict['estimate_id'] = est_id
         sensitivity_compliance = True
-        print(entry)
-        print(entry['Material Name'])
+        # print(entry)
+        # print(entry['Material Name'])
         if entry['Material Name'] != None:
             support_dict['material_id'] = mat_ids[entry['Material Name']]
         else:
@@ -2196,7 +2103,7 @@ def make_est_mat_lst(excel_path, est_id, version):
                 other_dict['material'] = mat
                 break
         est_mat_lst.append(other_dict)
-    print(sensitivity_lst)
+    # print(sensitivity_lst)
     return est_mat_lst, sensitivity_lst
 
 
@@ -2362,13 +2269,19 @@ def make_est_process_utilities(excel_path, est_id, version, basis_unit):
         utility_dict['version'] = version
         utility_dict['name'] = entry['Utility']
         utility_dict['consumption'] = {}
-        utility_dict['consumption']['baseline'] = entry['Consumption per %s catalyst' %basis_unit]
+        try:
+            utility_dict['consumption']['baseline'] = entry['Consumption per %s catalyst' % basis_unit]
+        except KeyError:
+            utility_dict['consumption']['baseline'] = 0.0
         utility_dict['consumption']['low'] = entry['Low']
         utility_dict['consumption']['high'] = entry['High']
         if type(utility_dict['consumption']['low']) == float:
             if math.isnan(utility_dict['consumption']['low']):
                 utility_dict['consumption'] = {}
-                utility_dict['consumption']['baseline'] = entry['Consumption per %s catalyst' %basis_unit]
+                try:
+                    utility_dict['consumption']['baseline'] = entry['Consumption per %s catalyst' % basis_unit]
+                except KeyError:
+                    utility_dict['consumption']['baseline'] = 0.0
         utility_dict['unit_cost'] = {}
         utility_dict['unit_cost']['baseline'] = entry['Unit Cost']
         utility_dict['unit_cost']['low'] = entry['Low.1']
@@ -2570,30 +2483,38 @@ def make_est_op_ex(excel_path, est_id, version):
 
 
 """
-The section below is used to add Ids to those objects which do not have ids specified
+Read/write all_ids.json
 """
 
+def get_all_ids():
+    try:  # check root directory first
+        with open(os.path.join(os.getcwd(), 'all_ids.json'), 'r') as f:
+            json_ids_str = f.read()
+    except FileNotFoundError:  # use default all_ids.json
+        with open(os.path.join(os.getcwd(), 'default', 'all_ids.json')) as f:
+            json_ids_str = f.read()
+    json_ids_dict = json.loads(json_ids_str)
+    return json_ids_dict
+
+
 def get_ids(lib):
-    # if os.path.exists(os.getcwd() + '/all_ids.json'):
-    with open(os.getcwd() + '/all_ids.json') as f:
-        json_ids_str = f.read()
-        json_ids_dict = json.loads(json_ids_str)
+    json_ids_dict = get_all_ids()
     id_dict = json_ids_dict[lib]
     return id_dict
 
 
 def add_id(lib, name):
-    with open(os.getcwd() + '/all_ids.json','r') as f:
-        json_ids_str = f.read()
-        json_ids_dict = json.loads(json_ids_str)
-        lib_to_edit = json_ids_dict[lib]
-        new_id = gen_id()
-        lib_to_edit[name] = new_id
-        json_ids_dict[lib] = lib_to_edit
-        json_ids_str = json.dumps(json_ids_dict, indent=2)
-    with open(os.getcwd() + '/all_ids.json','w') as g:
+    json_ids_dict = get_all_ids()
+    lib_to_edit = json_ids_dict[lib]
+    new_id = gen_id()
+    lib_to_edit[name] = new_id
+    json_ids_dict[lib] = lib_to_edit
+    json_ids_str = json.dumps(json_ids_dict, indent=2)
+    # always write user-added values to root directory
+    with open(os.path.join(os.getcwd(), 'all_ids.json'), 'w') as g:
         g.write(json_ids_str)
-    return new_id
+    # TODO: don't need to return lib_to_edit
+    return new_id, lib_to_edit
         
+
 # main()
-        

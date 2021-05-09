@@ -1,6 +1,7 @@
 # CatCost Data Tools
-all_ids.json
+./all_ids.json
 *.xlsx
+*.zip
 
 # Dev and OS
 .vscode/

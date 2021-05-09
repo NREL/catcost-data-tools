@@ -2,11 +2,16 @@ import os
 import pandas as pd
 import unittest
 
-from catcost_data_tools import catcost_data_tools_main as ccdt
+# load project module
+from context import ccdt
 
+
+DEBUG = False
 
 TEST_INDEX = 0
-TEST_XLSX = [f for f in os.listdir(os.path.join(os.getcwd(), 'tests', 'data')) if 'xlsx' in f]
+TEST_XLSX = [f for f in os.listdir(os.path.join(os.getcwd(), 'tests', 'data')) if 'xlsx' in f if f[0] != '~']
+
+if DEBUG: print(TEST_XLSX[TEST_INDEX])
 
 
 class TestGetMatLib(unittest.TestCase):
@@ -448,7 +453,7 @@ class TestEstimateToJson(unittest.TestCase):
         self.assertGreater(len(self.result[2]), 0)
 
     def test_est_to_json_3_data(self):
-        self.assertGreater(len(self.result[3]), 0)
+        self.assertGreaterEqual(len(self.result[3]), 0)
 
     def test_est_to_json_tuple(self):
         self.assertIsInstance(self.result, tuple)
@@ -536,7 +541,6 @@ class TestMakeEstMatLst(unittest.TestCase):
         version = '0.0a'
         self.result = ccdt.make_est_mat_lst(xlsx, est_id, version)
         if debug:
-            print(TEST_XLSX[TEST_INDEX])
             print(self.result)
 
     def test_make_est_mat_lst_tuple(self):
@@ -596,8 +600,7 @@ class TestMakeEstProcessUtilities(unittest.TestCase):
         xlsx = os.path.join('tests', 'data', TEST_XLSX[TEST_INDEX])
         est_id = 'test_id'
         version = '0.0a'
-        # TODO: manage basis unit as list of choices
-        basis_unit = 'lb'
+        basis_unit = pd.read_excel(xlsx, sheet_name='1 Inputs', header=None, usecols='D', skiprows=13, nrows=1).iloc[0,0]
         self.result = ccdt.make_est_process_utilities(xlsx, est_id, version,
                                                       basis_unit)
         if debug: print(self.result[1:])
@@ -681,8 +684,11 @@ class TestAddId(unittest.TestCase):
     def setUp(self):
         from shutil import copy2
         # backup all_ids.json for mods
-        copy2(os.path.join('.', 'all_ids.json'), os.path.join('.', 'all_ids.json.bak'))
-        print(os.listdir(os.path.join('.')))
+        try:
+            copy2(os.path.join(os.getcwd(), 'all_ids.json'), os.path.join(os.getcwd(), 'all_ids.json.bak'))
+        except FileNotFoundError:
+            copy2(os.path.join(os.getcwd(), 'default', 'all_ids.json'),
+                  os.path.join(os.getcwd(), 'default', 'all_ids.json.bak'))
     
     def test_add_id_file(self):
         from json import loads
@@ -697,9 +703,23 @@ class TestAddId(unittest.TestCase):
     def tearDown(self):
         from shutil import copy2, move
         # restore all_ids.json
-        copy2(os.path.join('.', 'all_ids.json.bak'), os.path.join('.', 'all_ids.json'))
-        os.remove(os.path.join('.', 'all_ids.json.bak'))
+        try:
+            copy2(os.path.join(os.getcwd(), 'all_ids.json.bak'), os.path.join(os.getcwd(), 'all_ids.json'))
+            os.remove(os.path.join(os.getcwd(), 'all_ids.json.bak'))
+        except FileNotFoundError:
+            copy2(os.path.join(os.getcwd(), 'default', 'all_ids.json.bak'),
+                  os.path.join(os.getcwd(), 'default', 'all_ids.json'))
+            os.remove(os.path.join(os.getcwd(), 'default', 'all_ids.json.bak'))
 
         
 if __name__ == '__main__':
-    unittest.main()
+    # open log file
+    with open(os.path.join(os.getcwd(), 'unittest.log'), 'a') as f:
+        runner = unittest.TextTestRunner(f)
+        loader = unittest.TestLoader()
+        # iterate over all files in tests/data/ folder
+        for TEST_INDEX in range(len(TEST_XLSX)):
+            print(TEST_INDEX, TEST_XLSX[TEST_INDEX])
+            # get all tests from this file
+            tests = loader.discover(os.path.dirname(__file__))
+            runner.run(tests)
