@@ -7,6 +7,7 @@ Created on Thu Jun 14 07:50:03 2018
 
 import pandas as pd
 import os
+from os.path import expanduser
 import numpy as np
 import math
 import uuid
@@ -2494,8 +2495,9 @@ Read/write all_ids.json
 """
 
 def get_all_ids():
-    try:  # check root directory first
-        with open(os.path.join(os.getcwd(), 'all_ids.json'), 'r') as f:
+    try:  # check ~/.catcost_data_tools/ directory first
+        storefolder = os.path.join(expanduser('~'), '.catcost-data-tools')
+        with open(os.path.join(storefolder, 'all_ids.json'), 'r') as f:
             json_ids_str = f.read()
     except FileNotFoundError:  # use default all_ids.json
         try:
@@ -2524,9 +2526,13 @@ def add_id(lib, name):
     lib_to_edit[name] = new_id
     json_ids_dict[lib] = lib_to_edit
     json_ids_str = json.dumps(json_ids_dict, indent=2)
-    # always write user-added values to root directory
+    # always write user-added values to ~/.catcost-data-tools/ directory
     # TODO: fix this for pyinstaller
-    with open(os.path.join(os.getcwd(), 'all_ids.json'), 'w') as g:
+    storefolder = os.path.join(expanduser('~'), '.catcost-data-tools')
+    # if ~/.catcost-data-tools/ does not exist, create it
+    if not os.path.exists(storefolder):
+        os.makedirs(storefolder)
+    with open(os.path.join(storefolder, 'all_ids.json'), 'w') as g:
         g.write(json_ids_str)
     # TODO: don't need to return lib_to_edit
     return new_id, lib_to_edit
