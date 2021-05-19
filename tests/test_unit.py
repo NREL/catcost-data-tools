@@ -90,9 +90,6 @@ class TestMakePriceDict(unittest.TestCase):
                                                 "Lab Units":"lab_scale_units",
                                                 "Bulk Quote Units":"bulk_quote_units"})
         mat_lib_df = mat_lib_df.drop(["Notes","Basis Cell"], 1)
-        mat_lib_df = mat_lib_df[mat_lib_df['Quote Source'] != 'IHS PEP']
-        mat_lib_df = mat_lib_df[mat_lib_df['Quote Source'] != 'IHS CEH']
-        mat_lib_df = mat_lib_df[mat_lib_df['Quote Source'] != 'IHS PEP quote']
 
         mat_lib_dict = mat_lib_df.to_dict('records')
         entry = mat_lib_dict[0]

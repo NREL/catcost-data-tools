@@ -365,9 +365,6 @@ def materials_to_json(excel_path, json_path, complete=False, version=VERSION, re
                                             "Bulk Quote Units": "bulk_quote_units"})
     #changes names of columns to match json
     mat_lib_df = mat_lib_df.drop(["Notes","Basis Cell"], 1)
-    mat_lib_df = mat_lib_df[mat_lib_df['Quote Source'] != 'IHS PEP']
-    mat_lib_df = mat_lib_df[mat_lib_df['Quote Source'] != 'IHS CEH']
-    mat_lib_df = mat_lib_df[mat_lib_df['Quote Source'] != 'IHS PEP quote']
     #mat_lib_df = mat_lib_df[mat_lib_df['Bulk Quote Units'] != 'cyl']
         
     clean_up_lst = ["Bulk Quote Price ($)","Bulk Quote Quantity",'Bulk Quote Units',
