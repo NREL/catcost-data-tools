@@ -19,16 +19,14 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog, QPushButton, QMainWindow, QMessageBox
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QIcon
-    
+
+# local imports
+from catcost_data_tools import VERSION
+
 
 """
 The section below uses PyQt5 to generate the user interface
 """
-
-
-with open(os.path.join(os.getcwd(), 'default', 'VERSION'), 'r') as f:
-    VERSION = f.read().strip()
-
 
 class App(QMainWindow):
     def __init__(self):
@@ -288,7 +286,11 @@ def make_price_dict(entry):
         #fills out quote block for quote prices
         price_dict['bulk_quote_units'] = entry['bulk_quote_units']
         price_dict["quote"] = {}
-        price_dict["quote"]["source"] = entry["Quote Source"]
+        # TODO: define datatype for pd.read_excel so "Quote Source" is always str
+        if isinstance(entry["Quote Source"], float):  # NaN trap
+            price_dict["quote"]["source"] = None
+        else:
+            price_dict["quote"]["source"] = entry["Quote Source"]
         price_dict["quote"]["price"] = entry["Bulk Quote Price ($)"]
         price_dict["quote"]["quantity"] = entry["Bulk Quote Quantity"]
         price_dict["quote"]["date"] = date_to_str(entry)[1]
@@ -1822,6 +1824,7 @@ def make_est_equip_lst(excel_path, est_id, version):
         
     for rownum in range(process_lims[0], process_lims[1]):
         row_value = equip.row_values(rownum)
+        row_strings = [v.lower() for v in row_value if isinstance(v, str)]
         # print(row_value)
         if 'Equipment Type' in row_value:
             df_start = rownum
@@ -1842,8 +1845,8 @@ def make_est_equip_lst(excel_path, est_id, version):
         elif ' < select catalyst or AP' in row_value:
             tmp_lst = [i for i,x in enumerate(row_value) if x == ' < select catalyst or AP']
             catalyst_or_AP = row_value[tmp_lst[0] - 1] #this entry shows up in the schema, but not the sample estimate I pulled from the web tool
-        elif 'estimate design production rate' in \
-            [v.lower() for v in row_value if isinstance(v, str)]:
+        elif 'production rate for this process template' in row_strings or \
+            'this process design production rate' in row_strings:
             c = row_value.index(next(s for s in row_value if s))  # chooses first populated column
             # tmp_lst = [i for i,x in enumerate(row_value) if x.lower() == 'estimate design production rate']
             reference_design_production = row_value[c + 1]
@@ -1901,6 +1904,7 @@ def make_est_mat_lst(excel_path, est_id, version):
             support_df_start = rownum + 3
         elif 'Other Materials' in row_value:
             other_df_start = rownum + 3
+    # TODO: Consolidate 3x logic into one
     metal_source_df = pd.read_excel(excel_path, sheet_name='2 Materials', 
                                     skiprows=metal_source_df_start, usecols='C:P')
     end_metal = 100
@@ -2003,58 +2007,59 @@ def make_est_mat_lst(excel_path, est_id, version):
         # print(entry['Material Name'])
         if entry['Material Name'] != None:
             support_dict['material_id'] = mat_ids[entry['Material Name']]
-        else:
-            support_dict['material_id'] = None
-        support_dict['version'] = version
-        support_dict['category'] = 'support'
-        support_dict['name'] = entry['Material Name']
-        support_dict['quantity_unit'] = entry['Unit']
-        support_dict['quantity'] = {}
-        support_dict['quantity']['baseline'] = entry['Quantity (Q)']
-        #support_dict['quantity']['high'] = entry['Q high']
-        #support_dict['quantity']['low'] = entry['Q low']
-        if type(entry['Q high']) in [float,int]:
-            if not math.isnan(entry['Q high']):
-                support_dict['quantity']['high'] = entry['Q high']
-                if entry['Q high'] < entry['Quantity (Q)']:
-                    sensitivity_compliance = False
-                    support_dict['quantity']['high'] = None
-        if type(entry['Q low']) in [float,int]:
-            if not math.isnan(entry['Q low']):
-                support_dict['quantity']['low'] = entry['Q low']
-                if entry['Q low'] > entry['Quantity (Q)']:
-                    sensitivity_compliance = False
-                    support_dict['quantity']['low'] = None
+        # else:
+            # support_dict['material_id'] = None
+            support_dict['version'] = version
+            support_dict['category'] = 'support'
+            support_dict['name'] = entry['Material Name']
+            support_dict['quantity_unit'] = entry['Unit']
+            support_dict['quantity'] = {}
+            support_dict['quantity']['baseline'] = entry['Quantity (Q)']
+            #support_dict['quantity']['high'] = entry['Q high']
+            #support_dict['quantity']['low'] = entry['Q low']
+            if type(entry['Q high']) in [float,int]:
+                if not math.isnan(entry['Q high']):
+                    support_dict['quantity']['high'] = entry['Q high']
+                    if entry['Q high'] < entry['Quantity (Q)']:
+                        sensitivity_compliance = False
+                        support_dict['quantity']['high'] = None
+            if type(entry['Q low']) in [float,int]:
+                if not math.isnan(entry['Q low']):
+                    support_dict['quantity']['low'] = entry['Q low']
+                    if entry['Q low'] > entry['Quantity (Q)']:
+                        sensitivity_compliance = False
+                        support_dict['quantity']['low'] = None
         
-        support_dict['material_unit_price'] = {}
-        for key in entry.keys():
-            if 'Unit Price' in key:
-                baseline_key = key
-        support_dict['material_unit_price']['baseline'] = entry[baseline_key]
-        support_dict['material_unit_price']['low'] = entry['Price low']
-        support_dict['material_unit_price']['high'] = entry['Price high']
-        # TODO: more robust sensitivity detection
-        sensitivity_compliance = True
-        if support_dict['material_unit_price']['baseline'] and support_dict['material_unit_price']['high']:
-            if support_dict['material_unit_price']['high'] < support_dict['material_unit_price']['baseline']:
-                support_dict['material_unit_price']['high'] = None
+            support_dict['material_unit_price'] = {}
+            for key in entry.keys():
+                if 'Unit Price' in key:
+                    baseline_key = key
+            support_dict['material_unit_price']['baseline'] = entry[baseline_key]
+            support_dict['material_unit_price']['low'] = entry['Price low']
+            support_dict['material_unit_price']['high'] = entry['Price high']
+            # TODO: more robust sensitivity detection
+            sensitivity_compliance = True
+            if support_dict['material_unit_price']['baseline'] and support_dict['material_unit_price']['high']:
+                if support_dict['material_unit_price']['high'] < support_dict['material_unit_price']['baseline']:
+                    support_dict['material_unit_price']['high'] = None
+                    sensitivity_compliance = False
+            else:
                 sensitivity_compliance = False
-        else:
-            sensitivity_compliance = False
-        if support_dict['material_unit_price']['baseline'] and support_dict['material_unit_price']['low']:
-            if support_dict['material_unit_price']['low'] > support_dict['material_unit_price']['baseline']:
-                support_dict['material_unit_price']['low'] = None
+            if support_dict['material_unit_price']['baseline'] and support_dict['material_unit_price']['low']:
+                if support_dict['material_unit_price']['low'] > support_dict['material_unit_price']['baseline']:
+                    support_dict['material_unit_price']['low'] = None
+                    sensitivity_compliance = False
+            else:
                 sensitivity_compliance = False
-        else:
-            sensitivity_compliance = False
-        sensitivity_lst.append(sensitivity_compliance)
-        support_dict['updatedOn'] = int(np.floor(time.time()))
-        for mat in mat_lib:
-            if mat['id'] == support_dict['material_id']:
-                support_dict['material'] = mat
-                break
+            sensitivity_lst.append(sensitivity_compliance)
+            support_dict['updatedOn'] = int(np.floor(time.time()))
+            for mat in mat_lib:
+                if mat['id'] == support_dict['material_id']:
+                    support_dict['material'] = mat
+                    break
             
-        est_mat_lst.append(support_dict)
+        if len(support_dict) > 2:
+            est_mat_lst.append(support_dict)
         
     for entry in other_df.iterrows():
         entry = entry[1]
@@ -2492,11 +2497,20 @@ Read/write all_ids.json
 """
 
 def get_all_ids():
+    # import pkgutil
+    
     try:  # check root directory first
         with open(os.path.join(os.getcwd(), 'all_ids.json'), 'r') as f:
             json_ids_str = f.read()
     except FileNotFoundError:  # use default all_ids.json
-        with open(os.path.join(os.getcwd(), 'default', 'all_ids.json')) as f:
+        try:
+            import importlib.resources as pkg_resources
+        except ImportError:
+            import importlib_resources as pkg_resources
+
+        from . import default  # enabled by __package__ naming at bottom
+
+        with pkg_resources.open_text(default, 'all_ids.json') as f:
             json_ids_str = f.read()
     json_ids_dict = json.loads(json_ids_str)
     return json_ids_dict
@@ -2516,6 +2530,7 @@ def add_id(lib, name):
     json_ids_dict[lib] = lib_to_edit
     json_ids_str = json.dumps(json_ids_dict, indent=2)
     # always write user-added values to root directory
+    # TODO: fix this for pyinstaller
     with open(os.path.join(os.getcwd(), 'all_ids.json'), 'w') as g:
         g.write(json_ids_str)
     # TODO: don't need to return lib_to_edit
@@ -2523,3 +2538,5 @@ def add_id(lib, name):
         
 
 # main()
+if __name__ == "__main__" and __package__ is None:
+    __package__ = "catcost_data_tools"
