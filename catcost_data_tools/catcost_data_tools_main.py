@@ -2455,7 +2455,7 @@ def make_est_op_ex(excel_path, est_id, version):
         cost_dict['unit'] = entry['Units']
         if cost_dict['unit'] == '% of FCI':
             cost_dict['_relative_path'] = 'estimate.factored_capital_total_fixed_capital_investment'
-        elif cost_dict['unit'] == '% of land':
+        elif cost_dict['unit'] in ['% of land', '% of value of land']:
             cost_dict['_relative_path'] = 'estimate.ref_capital_cost_land'
         elif cost_dict['unit'] == '% of LSM':
             cost_dict['_relative_path'] = 'estimate.direct_operating_total_cost'
