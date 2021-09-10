@@ -282,18 +282,20 @@ def make_price_dict(entry):
     price_dict["type"] = price_type
     price_dict["year"] = str(entry["Quote Year"])
     
+    # issue #2 resolved
+    # TODO: define datatype for pd.read_excel so "Quote Source" is always str
+    if isinstance(entry["Quote Source"], float):  # NaN trap
+        price_dict["source"] = None
+    else:
+        price_dict["source"] = entry["Quote Source"]
+    price_dict["date"] = date_to_str(entry)[1]
+
     if price_type == "quote":
         #fills out quote block for quote prices
         price_dict['bulk_quote_units'] = entry['bulk_quote_units']
         price_dict["quote"] = {}
-        # TODO: define datatype for pd.read_excel so "Quote Source" is always str
-        if isinstance(entry["Quote Source"], float):  # NaN trap
-            price_dict["quote"]["source"] = None
-        else:
-            price_dict["quote"]["source"] = entry["Quote Source"]
         price_dict["quote"]["price"] = entry["Bulk Quote Price ($)"]
         price_dict["quote"]["quantity"] = entry["Bulk Quote Quantity"]
-        price_dict["quote"]["date"] = date_to_str(entry)[1]
         if price_dict['bulk_quote_units'] == 'ton':
             price_dict['bulk_quote_units'] = 'tons'
         elif price_dict['bulk_quote_units'] == 'tonne':
@@ -410,12 +412,6 @@ def materials_to_json(excel_path, json_path, complete=False, version=VERSION, re
                 if math.isnan(entry[key]): 
                     entry[key] = None
 
-        # changes nan values for "date" within the price quote dictionary into null values
-        if 'quote' in entry['price'].keys():
-            if type(entry['price']['quote']['date']) == float:
-                if math.isnan(entry['price']['quote']['date']):
-                    entry['price']['quote']['date'] = None
-    
     # converts dictionary to json
     mat_lib_json = json.dumps(mat_lib_dict, indent=2)
     if json_path != None:
@@ -1418,8 +1414,11 @@ def make_density_dict(cleaned_tables, version=VERSION):
     Generates dictionary containing density values from spent catalyst tables
     """
     density_df = cleaned_tables[3]
-    density_df = density_df.rename(columns={"Catalyst":"name", "ρ (lb/ft3)":"density",
-                                            "ρ (kg/m3)":"density_si","Note":"note"})
+    # TODO: issue #3, prefer lb/ft3, use kg/m3 as backup, store either in "density" field, add units in "density_unit" field
+    density_df = density_df.rename(columns={"Catalyst":"name",
+                                            "ρ (lb/ft3)":"density",
+                                            "ρ (kg/m3)":"density_si",
+                                            "Note":"note"})
                                             #"ρ (kg/m3)":"density_si","Note":"note"})
     #density_df.drop("ρ (kg/m3)",axis=1,inplace=True)
     density_dict = density_df.to_dict('records')
