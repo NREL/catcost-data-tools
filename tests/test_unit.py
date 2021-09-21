@@ -680,33 +680,34 @@ class TestAddId(unittest.TestCase):
 
     def setUp(self):
         from shutil import copy2
-        # backup all_ids.json for mods
+        # backup all_ids.json for testing
+        # will check ~/.catcost-data-tools then catcost-data-tools/catcost_data_tools/default for all_ids.json
         try:
-            copy2(os.path.join(os.getcwd(), 'all_ids.json'), os.path.join(os.getcwd(), 'all_ids.json.bak'))
+            self.path = os.path.join(os.path.expanduser('~'), '.catcost-data-tools')
+            copy2(os.path.join(self.path, 'all_ids.json'), os.path.join(self.path, 'all_ids.json.bak'))
         except FileNotFoundError:
-            copy2(os.path.join(os.getcwd(), 'default', 'all_ids.json'),
-                  os.path.join(os.getcwd(), 'default', 'all_ids.json.bak'))
+            self.path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                                    'catcost_data_tools', 'default')
+            copy2(os.path.join(self.path, 'all_ids.json'), os.path.join(self.path, 'all_ids.json.bak'))
     
+
     def test_add_id_file(self):
         from json import loads
+        
         lib = 'hazard_id_dict'
         name = 'slinky'
         self.result = ccdt.add_id(lib, name)
-        path = os.path.join(os.getcwd(), '.', 'all_ids.json')
+        path = os.path.join(self.path, 'all_ids.json')
         with open(path) as f:
             id_dict = loads(f.read())[lib]
         self.assertIn(name, id_dict.keys())
 
+
     def tearDown(self):
         from shutil import copy2, move
         # restore all_ids.json
-        try:
-            copy2(os.path.join(os.getcwd(), 'all_ids.json.bak'), os.path.join(os.getcwd(), 'all_ids.json'))
-            os.remove(os.path.join(os.getcwd(), 'all_ids.json.bak'))
-        except FileNotFoundError:
-            copy2(os.path.join(os.getcwd(), 'default', 'all_ids.json.bak'),
-                  os.path.join(os.getcwd(), 'default', 'all_ids.json'))
-            os.remove(os.path.join(os.getcwd(), 'default', 'all_ids.json.bak'))
+        copy2(os.path.join(self.path, 'all_ids.json.bak'), os.path.join(self.path, 'all_ids.json'))
+        os.remove(os.path.join(self.path, 'all_ids.json.bak'))
 
         
 if __name__ == '__main__':

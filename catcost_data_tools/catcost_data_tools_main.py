@@ -1416,9 +1416,15 @@ def make_density_dict(cleaned_tables, version=VERSION):
     """
     density_df = cleaned_tables[3]
     # TODO: issue #3, prefer lb/ft3, use kg/m3 as backup, store either in "density" field, add units in "density_unit" field
+    density_df['density'] = density_df['ρ (lb/ft3)'].fillna(density_df['ρ (kg/m3)'])
+    density_df['density_units'] = ''
+    density_mask = density_df['ρ (lb/ft3)'].apply(np.isnan)
+    density_df.loc[density_mask, 'density_units'] = 'kg/m3'
+    density_df.loc[~density_mask, 'density_units'] = 'lb/ft3'
+    density_df.drop(['ρ (lb/ft3)', 'ρ (kg/m3)'], axis=1, inplace=True)
     density_df = density_df.rename(columns={"Catalyst":"name",
-                                            "ρ (lb/ft3)":"density",
-                                            "ρ (kg/m3)":"density_si",
+                                            # "ρ (lb/ft3)":"density",
+                                            # "ρ (kg/m3)":"density_si",
                                             "Note":"note"})
                                             #"ρ (kg/m3)":"density_si","Note":"note"})
     #density_df.drop("ρ (kg/m3)",axis=1,inplace=True)
