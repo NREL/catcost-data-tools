@@ -1,4 +1,4 @@
-numpy==1.19.2
+numpy==1.22.0
 pandas==1.1.2
 openpyxl==3.0.5
 xlrd==1.2.0
