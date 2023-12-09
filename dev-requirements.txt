@@ -1,1 +1,1 @@
-pyinstaller==4.0 # To build executable
+pyinstaller==5.13.1 # To build executable
